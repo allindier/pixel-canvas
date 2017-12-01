@@ -1,20 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
-
+import { PixelCanvasModule } from './pixel-canvas/pixel-canvas.module'
 
 import { AppComponent } from './app.component';
-import { CanvasControlsComponent } from './canvas-controls/canvas-controls.component';
-
 
 @NgModule({
   declarations: [
-    AppComponent,
-    CanvasControlsComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    PixelCanvasModule
   ],
   providers: [],
   bootstrap: [AppComponent]
