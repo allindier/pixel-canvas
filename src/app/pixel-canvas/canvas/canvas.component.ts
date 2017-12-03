@@ -22,7 +22,12 @@ export class CanvasComponent implements AfterViewInit {
   constructor() { }
 
   ngAfterViewInit() {
-    this.context = (<HTMLCanvasElement> this.canvas.nativeElement).getContext('2d');
+    let context = (<HTMLCanvasElement> this.canvas.nativeElement).getContext('2d');
+    if (context === null) {
+      throw 'Unable to obtain 2D context for canvas.';
+    } else {
+      this.context = context;
+    }
 
     this.drawPixelOutlines();
   }
