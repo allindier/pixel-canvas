@@ -4,6 +4,7 @@ import { IAppState } from '../../store';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { IPixelCanvas } from '../pixel-canvas.store';
 import { Subscription } from 'rxjs/Subscription';
+import { CanvasActions } from '../pixel-canvas.actions';
 
 type Coordinate = [number, number];
 
@@ -28,7 +29,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   readonly canvasWidth = 400;
   readonly canvasHeight = 400;
 
-  constructor(private readonly ngRedux: NgRedux<IAppState>) { }
+  constructor(private readonly ngRedux: NgRedux<IAppState>, private actions: CanvasActions) { }
 
   ngAfterViewInit() {
     const canvasElement = <HTMLCanvasElement> this.canvas.nativeElement;
@@ -39,30 +40,36 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.context = context;
     }
 
-    canvasElement.addEventListener('click', (event: MouseEvent) => {
-      const xCoord = event.clientX - canvasElement.offsetLeft;
-      const yCoord = event.clientY - canvasElement.offsetTop;
-
-      const xValue = Math.floor(xCoord * this.canvasData.width / this.canvasWidth);
-      const yValue = Math.floor(yCoord * this.canvasData.height / this.canvasHeight);
-
-      this.context.fillStyle = this.canvasData.color;
-      this.context.fillRect(xValue * this.pixelWidth, yValue * this.pixelHeight,
-        this.pixelWidth, this.pixelHeight);
-    });
-
     this.subscription = this.ngRedux.select<IPixelCanvas>('canvas').subscribe((canvas: IPixelCanvas) => {
       this.canvasData = canvas;
       this.pixelHeight = this.canvasHeight / canvas.height;
       this.pixelWidth = this.canvasWidth / canvas.width;
 
       this.clearCanvas();
+      this.drawPixels();
       this.drawPixelOutlines();
     });
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  /**
+   * Dispatches a canvas click event.  Does a little quick math to determine where on the canvas the click
+   * happened.
+   *
+   * @param event Mouse event from the HTML
+   */
+  canvasClick(event: MouseEvent) {
+    const canvasElement = <HTMLCanvasElement> this.canvas.nativeElement;
+
+    const xValue = Math.floor((event.clientX - canvasElement.offsetLeft)
+      * this.canvasData.width / this.canvasWidth);
+    const yValue = Math.floor((event.clientY - canvasElement.offsetTop)
+      * this.canvasData.height / this.canvasHeight);
+
+    this.ngRedux.dispatch(this.actions.canvasClick(xValue, yValue));
   }
 
   /**
@@ -99,6 +106,19 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       linePosition += barHeight;
     }
     this.context.setLineDash(oldLineDash);
+  }
+
+  /**
+   * Draws the pixels from the canvas data into the context
+   */
+  private drawPixels() {
+    this.canvasData.pixels.forEach((column, xIndex) => {
+      column.forEach((pixel, yIndex) => {
+        this.context.fillStyle = pixel;
+        this.context.fillRect(xIndex * this.pixelWidth, yIndex * this.pixelHeight,
+          this.pixelWidth, this.pixelHeight);
+      });
+    });
   }
 
   /**

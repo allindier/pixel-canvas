@@ -3,9 +3,17 @@ import { Action, AnyAction } from 'redux';
 
 @Injectable()
 export class CanvasActions {
+    static readonly CANVAS_CLICK = 'pixelChange.canvasClick';
     static readonly CHANGE_COLOR = 'pixelChange.changeColor';
     static readonly CHANGE_HEIGHT = 'pixelChange.changeHeight';
     static readonly CHANGE_WIDTH = 'pixelChange.changeWidth';
+
+    canvasClick(xCoord: number, yCoord: number) {
+        return {
+            type: CanvasActions.CANVAS_CLICK,
+            value: [xCoord, yCoord]
+        }
+    }
 
     changeColor(color: string): AnyAction {
         return {
