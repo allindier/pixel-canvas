@@ -1,4 +1,9 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
+import { IAppState } from '../../store';
+import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
+import { IPixelCanvas } from '../pixel-canvas.store';
+import { Subscription } from 'rxjs/Subscription';
 
 type Coordinate = [number, number];
 
@@ -7,7 +12,7 @@ type Coordinate = [number, number];
   templateUrl: './canvas.html',
   styleUrls: ['./canvas.css']
 })
-export class CanvasComponent implements AfterViewInit {
+export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private static DASH_ARRAY = [8,4];
 
@@ -15,11 +20,13 @@ export class CanvasComponent implements AfterViewInit {
   private context: CanvasRenderingContext2D;
 
   private width = 6;
-  private pixelWidth = 400;
   private height = 4;
-  private pixelHeight = 400;
+  private subscription: Subscription;
 
-  constructor() { }
+  readonly pixelWidth = 400;
+  readonly pixelHeight = 400;
+
+  constructor(private ngRedux: NgRedux<IAppState>) { }
 
   ngAfterViewInit() {
     let context = (<HTMLCanvasElement> this.canvas.nativeElement).getContext('2d');
@@ -29,7 +36,24 @@ export class CanvasComponent implements AfterViewInit {
       this.context = context;
     }
 
-    this.drawPixelOutlines();
+    this.subscription = this.ngRedux.select<IPixelCanvas>('canvas').subscribe((canvas: IPixelCanvas) => {
+      this.width = canvas.width;
+      this.height = canvas.height;
+
+      this.clearCanvas();
+      this.drawPixelOutlines();
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  /**
+   * Clears the contents of the canvas.  Does not account for transforms to the canvas.
+   */
+  private clearCanvas() {
+    this.context.clearRect(0, 0, this.pixelWidth, this.pixelHeight);
   }
 
   /**

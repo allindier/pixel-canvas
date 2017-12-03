@@ -1,11 +1,11 @@
 <div>
     <label for="canvas-width">Width</label>
     <!-- ngModelChange would be preferable, but seems to get called twice -->
-    <input id="canvas-width" [ngModel]="width" (change)="updateHeight($event.target.value)"
+    <input id="canvas-width" [ngModel]="(canvas | async).width" (change)="updateWidth($event.target.value)"
         type="number" min="1" (keydown.enter)="blurInput($event)">
     <br/>
     <label for="canvas-height">Height</label>
-    <input id="canvas-height" [ngModel]="height" (change)="updateHeight($event.target.value)"
+    <input id="canvas-height" [ngModel]="(canvas | async).height" (change)="updateHeight($event.target.value)"
         type="number" min="1" (keydown.enter)="blurInput($event)">
 </div>
 

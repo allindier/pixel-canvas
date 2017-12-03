@@ -1,4 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { NgRedux } from '@angular-redux/store';
+import { Observable } from 'rxjs/Observable';
+import { IAppState } from '../../store';
+import { IPixelCanvas } from '../pixel-canvas.store';
+import { CanvasActions } from '../pixel-canvas.actions';
 
 @Component({
   selector: 'app-canvas-controls',
@@ -8,11 +13,11 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 })
 export class CanvasControlsComponent implements OnInit {
 
-  height: number = 1;
-  width: number = 1;
+  canvas: Observable<IPixelCanvas>;
 
-  constructor() {
+  constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions) {
     // Empty for now, probably going to use later
+    this.canvas = ngRedux.select<IPixelCanvas>('canvas');
   }
 
   ngOnInit() {
@@ -61,8 +66,8 @@ export class CanvasControlsComponent implements OnInit {
    *
    * @param height Height (in pixels)
    */
-  updateHeight(height: number) {
-    console.log('Height updated: ', height);
+  updateHeight(height: string) {
+    this.ngRedux.dispatch(this.actions.changeHeight(parseInt(height)));
   }
 
   /**
@@ -70,8 +75,8 @@ export class CanvasControlsComponent implements OnInit {
    * 
    * @param width Width (in pixels)
    */
-  updateWidth(width: number) {
-    console.log('Width updated: ', width);
+  updateWidth(width: string) {
+    this.ngRedux.dispatch(this.actions.changeWidth(parseInt(width)));
   }
 
 }

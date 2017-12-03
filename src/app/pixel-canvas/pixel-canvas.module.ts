@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CanvasControlsComponent } from './canvas-controls/canvas-controls.component';
 import { PixelCanvasComponent } from './pixel-canvas.component';
 import { CanvasComponent } from './canvas/canvas.component';
+import { CanvasActions } from './pixel-canvas.actions';
 
 @NgModule({
   imports: [
@@ -18,6 +19,9 @@ import { CanvasComponent } from './canvas/canvas.component';
   ],
   exports: [
     PixelCanvasComponent
+  ],
+  providers: [
+    CanvasActions
   ]
 })
 export class PixelCanvasModule { }
