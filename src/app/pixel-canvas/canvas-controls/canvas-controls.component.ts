@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { NgRedux } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
 import { IAppState } from '../../store';
@@ -11,17 +11,14 @@ import { CanvasActions } from '../pixel-canvas.actions';
   styleUrls: ['./canvas-controls.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CanvasControlsComponent implements OnInit {
+export class CanvasControlsComponent {
+  static readonly UNIMPLEMENTED_ERROR = 'This feature is not yet implemented';
 
   canvas: Observable<IPixelCanvas>;
 
   constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions) {
     // Empty for now, probably going to use later
     this.canvas = ngRedux.select<IPixelCanvas>('canvas');
-  }
-
-  ngOnInit() {
-    // Empty for now, probably going to use later
   }
   
   /**
@@ -37,32 +34,42 @@ export class CanvasControlsComponent implements OnInit {
    * Tell the canvas to create a new blank slate
    */
   createNew() {
-    console.log('Create New!!!!!!!');
+    throw CanvasControlsComponent.UNIMPLEMENTED_ERROR;
   }
 
   /**
    * Redo the last action undone
    */
   redo() {
-    console.log('Redo');
+    throw CanvasControlsComponent.UNIMPLEMENTED_ERROR;
   }
 
   /**
    * Save the current state of the canvas
    */
   save() {
-    console.log('Save');
+    throw CanvasControlsComponent.UNIMPLEMENTED_ERROR;
   }
 
   /**
    * Undo the last action done
    */
   undo() {
-    console.log('Undo');
+    throw CanvasControlsComponent.UNIMPLEMENTED_ERROR;
   }
 
   /**
-   * Method to call to indicate that the height has changed
+   * Dispatches an action to change the color
+   * TODO: Validation of the color string
+   *
+   * @param color Color string
+   */
+  updateColor(color: string) {
+    this.ngRedux.dispatch(this.actions.changeColor(color));
+  }
+
+  /**
+   * Dispatches an action to update the height
    *
    * @param height Height (in pixels)
    */
@@ -71,7 +78,7 @@ export class CanvasControlsComponent implements OnInit {
   }
 
   /**
-   * Method to call to indicate the width has changed
+   * Dispatches an action to update the width
    * 
    * @param width Width (in pixels)
    */

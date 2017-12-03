@@ -10,7 +10,9 @@
 </div>
 
 <div>
-    <span>COLOR CONTROL!  YEEEEHAAA!</span>
+    <label for="canvas-color">Color</label>
+    <input id="canvas-color"[ngModel]="(canvas | async).color" (change)="updateColor($event.target.value)"
+        type="text" (keydown.enter)="blurInput($event)">
 </div>
 
 <div>

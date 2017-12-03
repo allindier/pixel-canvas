@@ -14,31 +14,47 @@ type Coordinate = [number, number];
 })
 export class CanvasComponent implements AfterViewInit, OnDestroy {
 
-  private static DASH_ARRAY = [8,4];
+  private static readonly DASH_ARRAY = [8,4];
 
   @ViewChild('canvas') canvas: ElementRef;
   private context: CanvasRenderingContext2D;
 
-  private width = 6;
-  private height = 4;
+  private canvasData: IPixelCanvas;
   private subscription: Subscription;
 
-  readonly pixelWidth = 400;
-  readonly pixelHeight = 400;
+  private pixelWidth: number;
+  private pixelHeight: number;
 
-  constructor(private ngRedux: NgRedux<IAppState>) { }
+  readonly canvasWidth = 400;
+  readonly canvasHeight = 400;
+
+  constructor(private readonly ngRedux: NgRedux<IAppState>) { }
 
   ngAfterViewInit() {
-    let context = (<HTMLCanvasElement> this.canvas.nativeElement).getContext('2d');
+    const canvasElement = <HTMLCanvasElement> this.canvas.nativeElement;
+    let context = canvasElement.getContext('2d');
     if (context === null) {
       throw 'Unable to obtain 2D context for canvas.';
     } else {
       this.context = context;
     }
 
+    canvasElement.addEventListener('click', (event: MouseEvent) => {
+      const xCoord = event.clientX - canvasElement.offsetLeft;
+      const yCoord = event.clientY - canvasElement.offsetTop;
+
+      const xValue = Math.floor(xCoord * this.canvasData.width / this.canvasWidth);
+      const yValue = Math.floor(yCoord * this.canvasData.height / this.canvasHeight);
+
+      this.context.fillStyle = this.canvasData.color;
+      this.context.fillRect(xValue * this.pixelWidth, yValue * this.pixelHeight,
+        this.pixelWidth, this.pixelHeight);
+    });
+
     this.subscription = this.ngRedux.select<IPixelCanvas>('canvas').subscribe((canvas: IPixelCanvas) => {
-      this.width = canvas.width;
-      this.height = canvas.height;
+      this.canvasData = canvas;
+      this.pixelHeight = this.canvasHeight / canvas.height;
+      this.pixelWidth = this.canvasWidth / canvas.width;
 
       this.clearCanvas();
       this.drawPixelOutlines();
@@ -53,7 +69,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
    * Clears the contents of the canvas.  Does not account for transforms to the canvas.
    */
   private clearCanvas() {
-    this.context.clearRect(0, 0, this.pixelWidth, this.pixelHeight);
+    this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
   }
 
   /**
@@ -66,19 +82,19 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
     // TODO: Don't dupe the code
     // Draw the horizontal lines
-    const barWidth = this.pixelWidth / this.width;
+    const barWidth = this.canvasWidth / this.canvasData.width;
     let linePosition = barWidth;
-    for (let i = 1; i < this.width; i++) {
-      CanvasComponent.drawLine(this.context, [linePosition, 0], [linePosition, this.pixelHeight]);
+    for (let i = 1; i < this.canvasData.width; i++) {
+      CanvasComponent.drawLine(this.context, [linePosition, 0], [linePosition, this.canvasHeight]);
 
       linePosition += barWidth;
     }
 
     // Draw the vertical lines
-    const barHeight = this.pixelHeight / this.height;
+    const barHeight = this.canvasHeight / this.canvasData.height;
     linePosition = barHeight;
-    for (let i = 1; i < this.height; i++) {
-      CanvasComponent.drawLine(this.context, [0, linePosition], [this.pixelWidth, linePosition]);
+    for (let i = 1; i < this.canvasData.height; i++) {
+      CanvasComponent.drawLine(this.context, [0, linePosition], [this.canvasWidth, linePosition]);
 
       linePosition += barHeight;
     }
