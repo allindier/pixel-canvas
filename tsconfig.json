@@ -14,7 +14,8 @@
     "strictNullChecks": true,
     "target": "es5",
     "typeRoots": [
-      "node_modules/@types"
+      "node_modules/@types",
+      "node_modules/redux-undo/typings.d.ts"
     ],
     "lib": [
       "es2017",

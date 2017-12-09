@@ -40,7 +40,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.context = context;
     }
 
-    this.subscription = this.ngRedux.select<IPixelCanvas>('canvas').subscribe((canvas: IPixelCanvas) => {
+    this.subscription = this.ngRedux.select<IPixelCanvas>(['canvas', 'present']).subscribe((canvas: IPixelCanvas) => {
       this.canvasData = canvas;
       this.pixelHeight = this.canvasHeight / canvas.height;
       this.pixelWidth = this.canvasWidth / canvas.width;

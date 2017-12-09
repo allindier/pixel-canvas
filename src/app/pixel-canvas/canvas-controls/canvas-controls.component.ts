@@ -3,7 +3,9 @@ import { NgRedux } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
 import { IAppState } from '../../store';
 import { IPixelCanvas } from '../pixel-canvas.store';
+
 import { CanvasActions } from '../pixel-canvas.actions';
+import { ActionCreators } from 'redux-undo';
 
 @Component({
   selector: 'app-canvas-controls',
@@ -18,7 +20,7 @@ export class CanvasControlsComponent {
 
   constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions) {
     // Empty for now, probably going to use later
-    this.canvas = ngRedux.select<IPixelCanvas>('canvas');
+    this.canvas = ngRedux.select<IPixelCanvas>(['canvas', 'present']);
   }
   
   /**
@@ -41,7 +43,7 @@ export class CanvasControlsComponent {
    * Redo the last action undone
    */
   redo() {
-    throw CanvasControlsComponent.UNIMPLEMENTED_ERROR;
+    this.ngRedux.dispatch(ActionCreators.redo());
   }
 
   /**
@@ -55,7 +57,7 @@ export class CanvasControlsComponent {
    * Undo the last action done
    */
   undo() {
-    throw CanvasControlsComponent.UNIMPLEMENTED_ERROR;
+    this.ngRedux.dispatch(ActionCreators.undo());
   }
 
   /**

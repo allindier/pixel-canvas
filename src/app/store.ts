@@ -4,6 +4,7 @@ import {
     reducer as canvas
 } from './pixel-canvas/pixel-canvas.store';
 import { combineReducers } from 'redux';
+import undoable from 'redux-undo';
 
 export interface IAppState {
     canvas: IPixelCanvas;
@@ -14,5 +15,7 @@ export const INITIAL_STATE: IAppState = {
 }
 
 export const rootReducer = combineReducers<IAppState>({
-    canvas
+    canvas: undoable(canvas, {
+        limit: 20
+    })
 });
