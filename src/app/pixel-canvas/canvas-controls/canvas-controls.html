@@ -11,8 +11,9 @@
 
 <div>
     <label for="canvas-color">Color</label>
-    <input id="canvas-color"[ngModel]="(canvas | async).color" (change)="updateColor($event.target.value)"
-        type="text" (keydown.enter)="blurInput($event)">
+    <input id="canvas-color" class="color-picker" (keydown.enter)="blurInput($event)"
+        [style.background]="(canvas | async).color" [cpOKButton]="true" [cpCancelButton]="true"
+        [colorPicker]="(canvas | async).color" (colorPickerChange)="updateColor($event)">
 </div>
 
 <div>

@@ -28,8 +28,8 @@ export class CanvasControlsComponent {
    *
    * @param input Input on the page to target
    */
-  public blurInput(input: any) {
-    input.target.blur();
+  public blurInput(input: Event) {
+    (<HTMLElement> input.target).blur();
   }
 
   /**
