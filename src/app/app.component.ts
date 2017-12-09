@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: "app-root",
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: "./app.html",
 })
 export class AppComponent {
-  title = 'app';
+  public title = "app";
 }

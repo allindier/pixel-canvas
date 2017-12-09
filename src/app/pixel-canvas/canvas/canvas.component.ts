@@ -1,46 +1,44 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
-import { IAppState } from '../../store';
-import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
-import { IPixelCanvas } from '../pixel-canvas.store';
-import { Subscription } from 'rxjs/Subscription';
-import { CanvasActions } from '../pixel-canvas.actions';
+import { NgRedux } from "@angular-redux/store/lib/src/components/ng-redux";
+import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
+import { OnDestroy } from "@angular/core/src/metadata/lifecycle_hooks";
+import { Subscription } from "rxjs/Subscription";
+import { IAppState } from "../../store";
+import { CanvasActions } from "../pixel-canvas.actions";
+import { IPixelCanvas } from "../pixel-canvas.store";
 
 type Coordinate = [number, number];
 
 @Component({
-  selector: 'app-canvas',
-  templateUrl: './canvas.html',
-  styleUrls: ['./canvas.css']
+  selector: "app-canvas",
+  styleUrls: ["./canvas.css"],
+  templateUrl: "./canvas.html",
 })
 export class CanvasComponent implements AfterViewInit, OnDestroy {
 
-  private static readonly DASH_ARRAY = [8,4];
+  private static readonly DASH_ARRAY = [8, 4];
 
-  @ViewChild('canvas') canvas: ElementRef;
+  public readonly canvasWidth = 400;
+  public readonly canvasHeight = 400;
+  @ViewChild("canvas") public canvas: ElementRef;
+
   private context: CanvasRenderingContext2D;
-
   private canvasData: IPixelCanvas;
   private subscription: Subscription;
-
   private pixelWidth: number;
   private pixelHeight: number;
 
-  readonly canvasWidth = 400;
-  readonly canvasHeight = 400;
-
   constructor(private readonly ngRedux: NgRedux<IAppState>, private actions: CanvasActions) { }
 
-  ngAfterViewInit() {
-    const canvasElement = <HTMLCanvasElement> this.canvas.nativeElement;
-    let context = canvasElement.getContext('2d');
+  public ngAfterViewInit() {
+    const canvasElement = this.canvas.nativeElement as HTMLCanvasElement;
+    const context = canvasElement.getContext("2d");
     if (context === null) {
-      throw 'Unable to obtain 2D context for canvas.';
+      throw new Error("Unable to obtain 2D context for canvas.");
     } else {
       this.context = context;
     }
 
-    this.subscription = this.ngRedux.select<IPixelCanvas>(['canvas', 'present']).subscribe((canvas: IPixelCanvas) => {
+    this.subscription = this.ngRedux.select<IPixelCanvas>(["canvas", "present"]).subscribe((canvas: IPixelCanvas) => {
       this.canvasData = canvas;
       this.pixelHeight = this.canvasHeight / canvas.height;
       this.pixelWidth = this.canvasWidth / canvas.width;
@@ -51,7 +49,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  public ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
@@ -61,8 +59,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
    *
    * @param event Mouse event from the HTML
    */
-  canvasClick(event: MouseEvent) {
-    const canvasElement = <HTMLCanvasElement> this.canvas.nativeElement;
+  public canvasClick(event: MouseEvent) {
+    const canvasElement = this.canvas.nativeElement as HTMLCanvasElement;
 
     const xValue = Math.floor((event.clientX - canvasElement.offsetLeft)
       * this.canvasData.width / this.canvasWidth);
@@ -92,7 +90,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     const barWidth = this.canvasWidth / this.canvasData.width;
     let linePosition = barWidth;
     for (let i = 1; i < this.canvasData.width; i++) {
-      CanvasComponent.drawLine(this.context, [linePosition, 0], [linePosition, this.canvasHeight]);
+      this.drawLine(this.context, [linePosition, 0], [linePosition, this.canvasHeight]);
 
       linePosition += barWidth;
     }
@@ -101,7 +99,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     const barHeight = this.canvasHeight / this.canvasData.height;
     linePosition = barHeight;
     for (let i = 1; i < this.canvasData.height; i++) {
-      CanvasComponent.drawLine(this.context, [0, linePosition], [this.canvasWidth, linePosition]);
+      this.drawLine(this.context, [0, linePosition], [this.canvasWidth, linePosition]);
 
       linePosition += barHeight;
     }
@@ -127,7 +125,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
    * @param start Start coordinate to use
    * @param end End coordinate to use
    */
-  private static drawLine(context: CanvasRenderingContext2D, start: Coordinate, end: Coordinate) {
+  private drawLine(context: CanvasRenderingContext2D, start: Coordinate, end: Coordinate) {
     context.beginPath();
     context.moveTo(start[0], start[1]);
     context.lineTo(end[0], end[1]);

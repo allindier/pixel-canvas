@@ -1,39 +1,38 @@
-import { Injectable } from '@angular/core';
-import { Action, AnyAction } from 'redux';
+import { Injectable } from "@angular/core";
+import { Action, AnyAction } from "redux";
 
 @Injectable()
 export class CanvasActions {
-    static readonly CANVAS_CLICK = 'pixelChange.canvasClick';
-    static readonly CHANGE_COLOR = 'pixelChange.changeColor';
-    static readonly CHANGE_HEIGHT = 'pixelChange.changeHeight';
-    static readonly CHANGE_WIDTH = 'pixelChange.changeWidth';
+    public static readonly CANVAS_CLICK = "pixelChange.canvasClick";
+    public static readonly CHANGE_COLOR = "pixelChange.changeColor";
+    public static readonly CHANGE_HEIGHT = "pixelChange.changeHeight";
+    public static readonly CHANGE_WIDTH = "pixelChange.changeWidth";
 
-    canvasClick(xCoord: number, yCoord: number) {
+    public canvasClick(xCoord: number, yCoord: number) {
         return {
             type: CanvasActions.CANVAS_CLICK,
-            value: [xCoord, yCoord]
-        }
+            value: [xCoord, yCoord],
+        };
     }
 
-    changeColor(color: string): AnyAction {
+    public changeColor(color: string): AnyAction {
         return {
             type: CanvasActions.CHANGE_COLOR,
-            value: color
+            value: color,
         };
     }
 
-    changeHeight(height: number): AnyAction {
+    public changeHeight(height: number): AnyAction {
         return {
             type: CanvasActions.CHANGE_HEIGHT,
-            value: height
+            value: height,
         };
     }
-    
-    changeWidth(width: number): AnyAction {
+
+    public changeWidth(width: number): AnyAction {
         return {
             type: CanvasActions.CHANGE_WIDTH,
-            value: width
+            value: width,
         };
     }
 }
-

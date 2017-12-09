@@ -1,62 +1,62 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { NgRedux } from '@angular-redux/store';
-import { Observable } from 'rxjs/Observable';
-import { IAppState } from '../../store';
-import { IPixelCanvas } from '../pixel-canvas.store';
+import { NgRedux } from "@angular-redux/store";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { Observable } from "rxjs/Observable";
+import { IAppState } from "../../store";
+import { IPixelCanvas } from "../pixel-canvas.store";
 
-import { CanvasActions } from '../pixel-canvas.actions';
-import { ActionCreators } from 'redux-undo';
+import { ActionCreators } from "redux-undo";
+import { CanvasActions } from "../pixel-canvas.actions";
 
 @Component({
-  selector: 'app-canvas-controls',
-  templateUrl: './canvas-controls.html',
-  styleUrls: ['./canvas-controls.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: "app-canvas-controls",
+  styleUrls: ["./canvas-controls.css"],
+  templateUrl: "./canvas-controls.html",
 })
 export class CanvasControlsComponent {
-  static readonly UNIMPLEMENTED_ERROR = 'This feature is not yet implemented';
+  public static readonly UNIMPLEMENTED_ERROR = "This feature is not yet implemented";
 
-  canvas: Observable<IPixelCanvas>;
+  public canvas: Observable<IPixelCanvas>;
 
   constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions) {
     // Empty for now, probably going to use later
-    this.canvas = ngRedux.select<IPixelCanvas>(['canvas', 'present']);
+    this.canvas = ngRedux.select<IPixelCanvas>(["canvas", "present"]);
   }
-  
+
   /**
    * Blurs the targeted input to trigger the change event
-   * 
-   * @param input Input on the page to target 
+   *
+   * @param input Input on the page to target
    */
-  blurInput(input: any) {
+  public blurInput(input: any) {
     input.target.blur();
   }
 
   /**
    * Tell the canvas to create a new blank slate
    */
-  createNew() {
+  public createNew() {
     throw CanvasControlsComponent.UNIMPLEMENTED_ERROR;
   }
 
   /**
    * Redo the last action undone
    */
-  redo() {
+  public redo() {
     this.ngRedux.dispatch(ActionCreators.redo());
   }
 
   /**
    * Save the current state of the canvas
    */
-  save() {
+  public save() {
     throw CanvasControlsComponent.UNIMPLEMENTED_ERROR;
   }
 
   /**
    * Undo the last action done
    */
-  undo() {
+  public undo() {
     this.ngRedux.dispatch(ActionCreators.undo());
   }
 
@@ -66,7 +66,7 @@ export class CanvasControlsComponent {
    *
    * @param color Color string
    */
-  updateColor(color: string) {
+  public updateColor(color: string) {
     this.ngRedux.dispatch(this.actions.changeColor(color));
   }
 
@@ -75,17 +75,17 @@ export class CanvasControlsComponent {
    *
    * @param height Height (in pixels)
    */
-  updateHeight(height: string) {
-    this.ngRedux.dispatch(this.actions.changeHeight(parseInt(height)));
+  public updateHeight(height: string) {
+    this.ngRedux.dispatch(this.actions.changeHeight(parseInt(height, 10)));
   }
 
   /**
    * Dispatches an action to update the width
-   * 
+   *
    * @param width Width (in pixels)
    */
-  updateWidth(width: string) {
-    this.ngRedux.dispatch(this.actions.changeWidth(parseInt(width)));
+  public updateWidth(width: string) {
+    this.ngRedux.dispatch(this.actions.changeWidth(parseInt(width, 10)));
   }
 
 }

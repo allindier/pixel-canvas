@@ -1,22 +1,22 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { NgRedux, NgReduxModule } from '@angular-redux/store';
-import { PixelCanvasModule } from './pixel-canvas/pixel-canvas.module'
+import { NgRedux, NgReduxModule } from "@angular-redux/store";
+import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
+import { PixelCanvasModule } from "./pixel-canvas/pixel-canvas.module";
 
-import { AppComponent } from './app.component';
-import { IAppState, rootReducer, INITIAL_STATE } from './store';
+import { AppComponent } from "./app.component";
+import { IAppState, INITIAL_STATE, rootReducer } from "./store";
 
 @NgModule({
+  bootstrap: [AppComponent],
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
     NgReduxModule,
-    PixelCanvasModule
+    PixelCanvasModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor(ngRedux: NgRedux<IAppState>) {

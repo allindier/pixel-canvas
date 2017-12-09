@@ -1,25 +1,25 @@
-import { AnyAction } from 'redux';
-import { CanvasActions } from './pixel-canvas.actions';
+import { AnyAction } from "redux";
+import { CanvasActions } from "./pixel-canvas.actions";
 
 export interface IPixelCanvas {
     color: string;
     height: number;
     pixels: string[][];
     width: number;
-};
+}
 
-const SOLID_WHITE = '#FFFFFF';
-let pixelArray: string[][] = [];
+const SOLID_WHITE = "#FFFFFF";
+const pixelArray: string[][] = [];
 pixelArray.length = 6;
 for (let i = 0; i < 6; i++) {
     pixelArray[i] = [SOLID_WHITE, SOLID_WHITE, SOLID_WHITE, SOLID_WHITE];
 }
 
 export const INITIAL_STATE: IPixelCanvas = {
-    color: '#CCCCCC',
+    color: "#CCCCCC",
     height: 4,
     pixels: pixelArray,
-    width: 6
+    width: 6,
 };
 
 export function reducer(lastState: IPixelCanvas = INITIAL_STATE, action: AnyAction): IPixelCanvas {
@@ -27,8 +27,8 @@ export function reducer(lastState: IPixelCanvas = INITIAL_STATE, action: AnyActi
 
     switch (action.type) {
         case CanvasActions.CANVAS_CLICK:
-            const x = action.value[0],
-                y = action.value[1];
+            const x = action.value[0];
+            const y = action.value[1];
 
             if (lastState.pixels[x][y] === lastState.color) {
                 newState = lastState;
@@ -60,10 +60,10 @@ export function reducer(lastState: IPixelCanvas = INITIAL_STATE, action: AnyActi
  * @param newHeight New height to use for the canvas
  */
 function changeHeight(state: IPixelCanvas, newHeight: number): IPixelCanvas {
-    let newState = Object.assign({}, state);
+    const newState = Object.assign({}, state);
     const lastHeight = state.height;
 
-    pixelArray.forEach(column => {
+    pixelArray.forEach((column) => {
         column.length = newHeight;
         for (let i = lastHeight; i < newHeight; i++) {
             column[i] = SOLID_WHITE;
@@ -81,10 +81,10 @@ function changeHeight(state: IPixelCanvas, newHeight: number): IPixelCanvas {
  * @param newWidth New width to use for the canvas
  */
 function changeWidth(state: IPixelCanvas, newWidth: number): IPixelCanvas {
-    let newState = Object.assign({}, state);
+    const newState = Object.assign({}, state);
     const lastWidth = state.width;
 
-    let newColumn: string[] = [];
+    const newColumn: string[] = [];
     for (let i = 0; i < newState.height; i++) {
         newColumn.push(SOLID_WHITE);
     }

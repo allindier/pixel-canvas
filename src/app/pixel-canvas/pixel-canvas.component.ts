@@ -1,15 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 
 @Component({
-  selector: 'pixel-canvas',
-  templateUrl: './pixel-canvas.html',
-  styleUrls: ['./pixel-canvas.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: "pixel-canvas",
+  styleUrls: ["./pixel-canvas.css"],
+  templateUrl: "./pixel-canvas.html",
 })
-export class PixelCanvasComponent implements OnInit {
-
-  constructor() {}
-
-  ngOnInit() {}
-
+export class PixelCanvasComponent {
+  // Class currently does nothing
 }
