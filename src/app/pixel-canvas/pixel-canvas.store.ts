@@ -27,12 +27,17 @@ export function reducer(lastState: IPixelCanvas = INITIAL_STATE, action: AnyActi
 
     switch (action.type) {
         case CanvasActions.CANVAS_CLICK:
-            newState = Object.assign({}, lastState);
             const x = action.value[0],
                 y = action.value[1];
-            newState.pixels = newState.pixels.slice();
-            newState.pixels[x] = newState.pixels[x].slice();
-            newState.pixels[x][y] = newState.color;
+
+            if (lastState.pixels[x][y] === lastState.color) {
+                newState = lastState;
+            } else {
+                newState = Object.assign({}, lastState);
+                newState.pixels = newState.pixels.slice();
+                newState.pixels[x] = newState.pixels[x].slice();
+                newState.pixels[x][y] = newState.color;
+            }
 
             return newState;
         case CanvasActions.CHANGE_COLOR:

@@ -1,11 +1,21 @@
 /* TODO: Figure out how to not be stupid with CSS */
 
-.canvas-controls {
-    border: 1px solid black;
-    display: inline-block;
-    vertical-align: top;
+.canvas {
+    grid-row: span 2;
 }
 
-.canvas {
-    display: inline-block;
+.canvas-controls {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.grid-arrangement {
+    display: grid;
+    grid-template-columns: [controls] auto [canvas] 450px;
+    grid-template-rows: [top] auto [middle] 50% [bottom];
+}
+
+.image-display {
+    grid-column: 1;
+    grid-row: 2;
 }

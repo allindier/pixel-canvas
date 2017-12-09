@@ -6,6 +6,7 @@ import { CanvasControlsComponent } from './canvas-controls/canvas-controls.compo
 import { PixelCanvasComponent } from './pixel-canvas.component';
 import { CanvasComponent } from './canvas/canvas.component';
 import { CanvasActions } from './pixel-canvas.actions';
+import { ImageDisplayComponent } from './image-display/image-display.component';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { CanvasActions } from './pixel-canvas.actions';
   declarations: [
     CanvasControlsComponent,
     PixelCanvasComponent,
-    CanvasComponent
+    CanvasComponent,
+    ImageDisplayComponent
   ],
   exports: [
     PixelCanvasComponent
