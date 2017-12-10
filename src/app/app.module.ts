@@ -3,6 +3,7 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { PixelCanvasModule } from "./pixel-canvas/pixel-canvas.module";
 
+import { AppActions } from "./app.actions";
 import { AppComponent } from "./app.component";
 import { IAppState, INITIAL_STATE, rootReducer } from "./store";
 
@@ -16,7 +17,9 @@ import { IAppState, INITIAL_STATE, rootReducer } from "./store";
     NgReduxModule,
     PixelCanvasModule,
   ],
-  providers: [],
+  providers: [
+    AppActions,
+  ],
 })
 export class AppModule {
   constructor(ngRedux: NgRedux<IAppState>) {

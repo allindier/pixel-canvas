@@ -5,6 +5,7 @@ import { IAppState } from "../../store";
 import { IPixelCanvas } from "../pixel-canvas.store";
 
 import { ActionCreators } from "redux-undo";
+import { AppActions } from "../../app.actions";
 import { CanvasActions } from "../pixel-canvas.actions";
 
 @Component({
@@ -18,7 +19,7 @@ export class CanvasControlsComponent {
 
   public canvas: Observable<IPixelCanvas>;
 
-  constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions) {
+  constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions, private appActions: AppActions) {
     // Empty for now, probably going to use later
     this.canvas = ngRedux.select<IPixelCanvas>(["canvas", "present"]);
   }
@@ -29,14 +30,14 @@ export class CanvasControlsComponent {
    * @param input Input on the page to target
    */
   public blurInput(input: Event) {
-    (<HTMLElement> input.target).blur();
+    (input.target as HTMLElement).blur();
   }
 
   /**
    * Tell the canvas to create a new blank slate
    */
   public createNew() {
-    throw CanvasControlsComponent.UNIMPLEMENTED_ERROR;
+    this.ngRedux.dispatch(this.actions.clearCanvas());
   }
 
   /**
@@ -50,7 +51,7 @@ export class CanvasControlsComponent {
    * Save the current state of the canvas
    */
   public save() {
-    throw CanvasControlsComponent.UNIMPLEMENTED_ERROR;
+    this.ngRedux.dispatch(this.appActions.saveCanvas());
   }
 
   /**

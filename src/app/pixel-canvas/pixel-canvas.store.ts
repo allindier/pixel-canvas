@@ -9,20 +9,23 @@ export interface IPixelCanvas {
 }
 
 const SOLID_WHITE = "#FFFFFF";
-const pixelArray: string[][] = [];
-pixelArray.length = 6;
-for (let i = 0; i < 6; i++) {
-    pixelArray[i] = [SOLID_WHITE, SOLID_WHITE, SOLID_WHITE, SOLID_WHITE];
+
+export function getInitialState(): IPixelCanvas {
+    const pixelArray: string[][] = [];
+    pixelArray.length = 6;
+    for (let i = 0; i < 6; i++) {
+        pixelArray[i] = [SOLID_WHITE, SOLID_WHITE, SOLID_WHITE, SOLID_WHITE];
+    }
+
+    return {
+        color: "#CCCCCC",
+        height: 4,
+        pixels: pixelArray,
+        width: 6,
+    };
 }
 
-export const INITIAL_STATE: IPixelCanvas = {
-    color: "#CCCCCC",
-    height: 4,
-    pixels: pixelArray,
-    width: 6,
-};
-
-export function reducer(lastState: IPixelCanvas = INITIAL_STATE, action: AnyAction): IPixelCanvas {
+export function reducer(lastState: IPixelCanvas = getInitialState(), action: AnyAction): IPixelCanvas {
     let newState: IPixelCanvas;
 
     switch (action.type) {
@@ -48,6 +51,8 @@ export function reducer(lastState: IPixelCanvas = INITIAL_STATE, action: AnyActi
             return changeHeight(lastState, action.value);
         case CanvasActions.CHANGE_WIDTH:
             return changeWidth(lastState, action.value);
+        case CanvasActions.CLEAR_CANVAS:
+            return getInitialState();
         default:
             return lastState;
     }
@@ -63,19 +68,21 @@ function changeHeight(state: IPixelCanvas, newHeight: number): IPixelCanvas {
     const newState = Object.assign({}, state);
     const lastHeight = state.height;
 
-    pixelArray.forEach((column) => {
+    state.pixels.forEach((column) => {
         column.length = newHeight;
         for (let i = lastHeight; i < newHeight; i++) {
             column[i] = SOLID_WHITE;
         }
+        column = column.slice();
     });
+    state.pixels = state.pixels.slice();
 
     newState.height = newHeight;
     return newState;
 }
 
 /**
- * Takes in the state of the canvas and returns a new canvas state with the given height.
+ * Takes in the state of the canvas and returns a new canvas state with the given width.
  * All new cells are colored solid white.
  * @param state Current state object
  * @param newWidth New width to use for the canvas
@@ -89,10 +96,11 @@ function changeWidth(state: IPixelCanvas, newWidth: number): IPixelCanvas {
         newColumn.push(SOLID_WHITE);
     }
 
-    pixelArray.length = newWidth;
+    state.pixels.length = newWidth;
     for (let i = lastWidth; i < newWidth; i++) {
-        pixelArray[i] = newColumn.slice(0);
+        state.pixels[i] = newColumn.slice();
     }
+    state.pixels = state.pixels.slice();
 
     newState.width = newWidth;
     return newState;

@@ -1,6 +1,7 @@
 import { NgRedux } from "@angular-redux/store";
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ChangeDetectionStrategy } from "@angular/core";
+import "rxjs/add/operator/skip";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
 import { IAppState } from "../../store";
@@ -15,15 +16,22 @@ import { IPixelCanvas } from "../pixel-canvas.store";
 export class ImageDisplayComponent implements AfterViewInit {
 
   @ViewChild("displayCanvas") public canvas: ElementRef;
+  @ViewChild("downloadLink") public downloadLink: ElementRef;
+
+  public appData: Observable<symbol>;
   public canvasData: Observable<IPixelCanvas>;
 
+  private appSubscription: Subscription;
+  private canvasSubscription: Subscription;
+
   private context: CanvasRenderingContext2D;
-  private subscription: Subscription;
-  private amplification = 5;
+  private readonly amplification = 5;
 
   constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions) {
-    // Empty for now, probably going to use later
     this.canvasData = ngRedux.select<IPixelCanvas>(["canvas", "present"]);
+
+    // Need to skip the first call to avoid the save dialog on initialization
+    this.appData = ngRedux.select<symbol>("app").skip(1);
   }
 
   public ngAfterViewInit() {
@@ -35,13 +43,27 @@ export class ImageDisplayComponent implements AfterViewInit {
       this.context = context;
     }
 
-    this.subscription = this.canvasData.subscribe(this.drawCanvas.bind(this));
+    this.canvasSubscription = this.canvasData.subscribe(this.drawCanvas.bind(this));
+    this.appSubscription = this.appData.subscribe(() => {
+      const linkElement = this.downloadLink.nativeElement as HTMLLinkElement;
+      linkElement.href = (this.canvas.nativeElement as HTMLCanvasElement).toDataURL();
+      linkElement.click();
+    });
   }
 
+  /**
+   * Called on destroy.  Cleans up subscriptions in this class.
+   */
   public ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.canvasSubscription.unsubscribe();
+    this.appSubscription.unsubscribe();
   }
 
+  /**
+   * Draws the current canvas data onto the display canvas
+   *
+   * @param canvas Canvas data to use when drawing on the canvas
+   */
   private drawCanvas(canvas: IPixelCanvas) {
     // Directly modify the canvas like this so we retain a reference to the object on the page
     const element: HTMLCanvasElement = this.canvas.nativeElement;
