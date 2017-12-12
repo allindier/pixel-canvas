@@ -11,11 +11,15 @@
 
 .grid-arrangement {
     display: grid;
-    grid-template-columns: [controls] auto [canvas] 450px;
-    grid-template-rows: [top] auto [middle] 50% [bottom];
+    grid-template-columns: auto auto;
+    grid-auto-rows: 1fr;
 }
 
 .image-display {
     grid-column: 1;
     grid-row: 2;
+}
+
+.card-margin {
+    margin: 6px;
 }

@@ -48,8 +48,14 @@ export function reducer(lastState: IPixelCanvas = getInitialState(), action: Any
             newState.color = action.value;
             return newState;
         case CanvasActions.CHANGE_HEIGHT:
+            if (!(action.value > 1)) {
+                return Object.assign({}, lastState);
+            }
             return changeHeight(lastState, action.value);
         case CanvasActions.CHANGE_WIDTH:
+            if (!(action.value > 1)) {
+                return Object.assign({}, lastState);
+            }
             return changeWidth(lastState, action.value);
         case CanvasActions.CLEAR_CANVAS:
             return getInitialState();
@@ -68,14 +74,14 @@ function changeHeight(state: IPixelCanvas, newHeight: number): IPixelCanvas {
     const newState = Object.assign({}, state);
     const lastHeight = state.height;
 
-    state.pixels.forEach((column) => {
+    newState.pixels = newState.pixels.slice();
+    newState.pixels.forEach((column) => {
+        column = column.slice();
         column.length = newHeight;
         for (let i = lastHeight; i < newHeight; i++) {
             column[i] = SOLID_WHITE;
         }
-        column = column.slice();
     });
-    state.pixels = state.pixels.slice();
 
     newState.height = newHeight;
     return newState;
@@ -96,11 +102,11 @@ function changeWidth(state: IPixelCanvas, newWidth: number): IPixelCanvas {
         newColumn.push(SOLID_WHITE);
     }
 
-    state.pixels.length = newWidth;
+    newState.pixels = newState.pixels.slice();
+    newState.pixels.length = newWidth;
     for (let i = lastWidth; i < newWidth; i++) {
-        state.pixels[i] = newColumn.slice();
+        newState.pixels[i] = newColumn.slice();
     }
-    state.pixels = state.pixels.slice();
 
     newState.width = newWidth;
     return newState;

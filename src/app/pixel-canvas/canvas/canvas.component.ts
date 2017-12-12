@@ -60,11 +60,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
    * @param event Mouse event from the HTML
    */
   public canvasClick(event: MouseEvent) {
-    const canvasElement = this.canvas.nativeElement as HTMLCanvasElement;
+    const boundingRect = (this.canvas.nativeElement as HTMLCanvasElement).getBoundingClientRect();
 
-    const xValue = Math.floor((event.clientX - canvasElement.offsetLeft)
+    const xValue = Math.floor((event.clientX - boundingRect.left)
       * this.canvasData.width / this.canvasWidth);
-    const yValue = Math.floor((event.clientY - canvasElement.offsetTop)
+    const yValue = Math.floor((event.clientY - boundingRect.top)
       * this.canvasData.height / this.canvasHeight);
 
     this.ngRedux.dispatch(this.actions.canvasClick(xValue, yValue));
