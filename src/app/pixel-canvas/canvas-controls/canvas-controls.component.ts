@@ -15,7 +15,6 @@ import { CanvasActions } from "../pixel-canvas.actions";
   templateUrl: "./canvas-controls.html",
 })
 export class CanvasControlsComponent {
-  public static readonly UNIMPLEMENTED_ERROR = "This feature is not yet implemented";
 
   public canvas: Observable<IPixelCanvas>;
 

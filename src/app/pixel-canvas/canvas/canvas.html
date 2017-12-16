@@ -1,1 +1,2 @@
-<canvas #canvas width="{{canvasWidth}}" height="{{canvasHeight}}" (click)="canvasClick($event)"></canvas>
+<canvas #canvas width="{{canvasWidth}}" height="{{canvasHeight}}" (click)="canvasClick($event)"
+    (DOMMouseScroll)="zoomCanvas($event)"></canvas>

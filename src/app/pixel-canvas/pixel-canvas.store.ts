@@ -74,13 +74,13 @@ function changeHeight(state: IPixelCanvas, newHeight: number): IPixelCanvas {
     const newState = Object.assign({}, state);
     const lastHeight = state.height;
 
-    newState.pixels = newState.pixels.slice();
-    newState.pixels.forEach((column) => {
+    newState.pixels = newState.pixels.map((column) => {
         column = column.slice();
         column.length = newHeight;
         for (let i = lastHeight; i < newHeight; i++) {
             column[i] = SOLID_WHITE;
         }
+        return column;
     });
 
     newState.height = newHeight;

@@ -26,6 +26,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private subscription: Subscription;
   private pixelWidth: number;
   private pixelHeight: number;
+  private zoom: number = 10;
 
   constructor(private readonly ngRedux: NgRedux<IAppState>, private actions: CanvasActions) { }
 
@@ -43,14 +44,27 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.pixelHeight = this.canvasHeight / canvas.height;
       this.pixelWidth = this.canvasWidth / canvas.width;
 
-      this.clearCanvas();
-      this.drawPixels();
-      this.drawPixelOutlines();
+      this.redrawCanvas();
     });
   }
 
   public ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  /**
+   * Dispatches an event to modify the zoom level of the canvas.
+   * Pretty sure the type is wrong for this event...
+   * @param event Event from the mouse scrolling
+   */
+  public zoomCanvas(event: WheelEvent) {
+    if (event.detail < 0) {
+      this.zoom++;
+    } else {
+      this.zoom--;
+    }
+
+    this.redrawCanvas();
   }
 
   /**
@@ -73,17 +87,19 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   /**
    * Clears the contents of the canvas.  Does not account for transforms to the canvas.
    */
-  private clearCanvas() {
-    this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+  private clearCanvas(zoom: number) {
+    this.context.clearRect(0, 0, this.canvasWidth / zoom, this.canvasHeight / zoom);
   }
 
   /**
    * Draws the outlines of the pixels on the canvas.  Draws a dashed line, but does reset that back
    * to its old value.
+   * @param zoom Zoom level to draw the outlines for.  Only affects the size of the line.
    */
-  private drawPixelOutlines() {
+  private drawPixelOutlines(zoom: number) {
     const oldLineDash = this.context.getLineDash();
     this.context.setLineDash(CanvasComponent.DASH_ARRAY);
+    this.context.lineWidth = 1 / zoom;
 
     // TODO: Don't dupe the code
     // Draw the horizontal lines
@@ -130,6 +146,15 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     context.moveTo(start[0], start[1]);
     context.lineTo(end[0], end[1]);
     context.stroke();
+  }
+
+  private redrawCanvas() {
+    const zoomValue = this.zoom / 10;
+    this.context.setTransform(zoomValue, 0, 0, zoomValue, 0, 0);
+
+    this.clearCanvas(zoomValue);
+    this.drawPixels();
+    this.drawPixelOutlines(zoomValue);
   }
 
 }
