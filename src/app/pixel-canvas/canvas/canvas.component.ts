@@ -16,6 +16,9 @@ type Coordinate = [number, number];
 })
 export class CanvasComponent implements AfterViewInit, OnDestroy {
 
+  private static readonly MIN_ZOOM = 10;
+  private static readonly MAX_ZOOM = 40;
+
   @ViewChild("canvas") public canvasElem: ElementRef;
   public readonly canvasWidth = 400;
   public readonly canvasHeight = 400;
@@ -57,11 +60,12 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.zoom--;
     }
 
-    if (this.zoom < 10) {
-      this.zoom = 10;
-    } else if (this.zoom > 25) {
-      this.zoom = 25;
+    if (this.zoom < CanvasComponent.MIN_ZOOM) {
+      this.zoom = CanvasComponent.MIN_ZOOM;
+    } else if (this.zoom > CanvasComponent.MAX_ZOOM) {
+      this.zoom = CanvasComponent.MAX_ZOOM;
     } else {
+      this.canvas.calculateOffset(this.canvas.getEventPosition(event), this.zoom / 10);
       this.redrawCanvas();
     }
   }
@@ -75,20 +79,18 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   public canvasClick(event: MouseEvent) {
     const coordinate = this.canvas.getEventPosition(event);
 
-    const zoom = this.zoom / 10;
-    const xValue = Math.floor(coordinate[0] / zoom * this.canvasData.width / this.canvasWidth);
-    const yValue = Math.floor(coordinate[1] / zoom * this.canvasData.height / this.canvasHeight);
+    const xValue = Math.floor(coordinate[0] * this.canvasData.width / this.canvasWidth);
+    const yValue = Math.floor(coordinate[1] * this.canvasData.height / this.canvasHeight);
 
     this.ngRedux.dispatch(this.actions.canvasClick(xValue, yValue));
   }
 
   private redrawCanvas() {
-    const zoomValue = this.zoom / 10;
-    this.canvas.setZoom(zoomValue);
+    this.canvas.zoom = this.zoom;
 
-    this.canvas.clearCanvas(zoomValue);
+    this.canvas.clearCanvas();
     this.canvas.drawPixels(this.canvasData.pixels, this.canvasData.width, this.canvasData.height);
-    this.canvas.drawPixelOutlines(zoomValue, this.canvasData.width, this.canvasData.height);
+    this.canvas.drawPixelOutlines(this.canvasData.width, this.canvasData.height);
   }
 
 }
