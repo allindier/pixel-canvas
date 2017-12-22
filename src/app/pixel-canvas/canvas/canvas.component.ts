@@ -32,6 +32,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   constructor(private readonly ngRedux: NgRedux<IAppState>, private actions: CanvasActions) { }
 
+  /**
+   * Fetches the reference to the canvas object on the page after construction and then subscribes to redux for
+   * changes in the state of things.
+   */
   public ngAfterViewInit() {
     this.canvas = new CanvasUtility(this.canvasElem.nativeElement, this.canvasWidth, this.canvasHeight);
 
@@ -44,6 +48,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+   * Destroys the subscription created after the view initializes.
+   */
   public ngOnDestroy() {
     this.subscription.unsubscribe();
   }
@@ -54,20 +61,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
    * @param event Event from the mouse scrolling
    */
   public zoomCanvas(event: WheelEvent) {
-    if (event.detail < 0) {
-      this.zoom++;
-    } else {
-      this.zoom--;
-    }
-
-    if (this.zoom < CanvasComponent.MIN_ZOOM) {
-      this.zoom = CanvasComponent.MIN_ZOOM;
-    } else if (this.zoom > CanvasComponent.MAX_ZOOM) {
-      this.zoom = CanvasComponent.MAX_ZOOM;
-    } else {
-      this.canvas.calculateOffset(this.canvas.getEventPosition(event), this.zoom / 10);
-      this.redrawCanvas();
-    }
+    const eventLocation = this.canvas.getEventPosition(event);
+    this.ngRedux.dispatch(this.actions.zoomCanvas(event.detail < 0, eventLocation[0], eventLocation[1]));
   }
 
   /**
@@ -85,8 +80,13 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.ngRedux.dispatch(this.actions.canvasClick(xValue, yValue));
   }
 
+  /**
+   * Sets the zoom for the canvas and then redraws the whole thing using the utility.
+   */
   private redrawCanvas() {
-    this.canvas.zoom = this.zoom;
+    this.canvas.zoom = this.canvasData.zoom;
+    this.canvas.xOffset = this.canvasData.xOffset;
+    this.canvas.yOffset = this.canvasData.yOffset;
 
     this.canvas.clearCanvas();
     this.canvas.drawPixels(this.canvasData.pixels, this.canvasData.width, this.canvasData.height);
