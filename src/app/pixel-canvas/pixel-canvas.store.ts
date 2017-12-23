@@ -1,4 +1,5 @@
 import { AnyAction } from "redux";
+import { CalculateOffset, WasmUtil } from "../../utils.wasm";
 import { CanvasActions } from "./pixel-canvas.actions";
 
 export interface IPixelCanvas {
@@ -139,36 +140,10 @@ function changeZoom(state: IPixelCanvas, zoomIn: boolean, xCoord: number, yCoord
     const newState = Object.assign({}, state);
     newState.zoom = zoom;
     const newZoom = newState.zoom / 10;
-    newState.xOffset = calculateOffset(xCoord, newState.xOffset, oldZoom, newZoom, CANVAS_WIDTH);
-    newState.yOffset = calculateOffset(yCoord, newState.yOffset, oldZoom, newZoom, CANVAS_HEIGHT);
+
+    newState.xOffset = WasmUtil.calculateOffset(xCoord, newState.xOffset, oldZoom, newZoom, CANVAS_WIDTH);
+    newState.yOffset = WasmUtil.calculateOffset(yCoord, newState.yOffset, oldZoom, newZoom, CANVAS_HEIGHT);
+
     return newState;
   }
-}
-
-function calculateOffset(coord: number, offset: number, oldZoom: number, newZoom: number, size: number) {
-  const newValue = size / newZoom;
-
-  const gap = size - newValue;
-  let firstSide = offset;
-  if (firstSide < 0) {
-    firstSide = 0;
-  } else if (firstSide > gap) {
-    firstSide = gap;
-  }
-
-  let secondSide = offset + size / oldZoom - newValue;
-  if (secondSide > gap) {
-    secondSide = gap;
-  } else if (secondSide < 0) {
-    secondSide = 0;
-  }
-
-  const boundary = [firstSide, secondSide];
-  let newOffset = coord - newValue / 2;
-  if (newOffset < boundary[0]) {
-    newOffset = boundary[0];
-  } else if (newOffset > boundary[1]) {
-    newOffset = boundary[1];
-  }
-  return newOffset;
 }
