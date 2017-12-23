@@ -31,11 +31,7 @@ export class WasmUtil {
     }).then((object: IWebAssemblyModule) => {
       WasmUtil.importObject = object.instance.exports;
       WasmUtil.isInit = true;
-    }).catch(() => {
-      WasmUtil.importObject = {
-        calculateOffset,
-      };
-    });
+    }).catch(console.error);
   }
 
   public static get initialized() {
@@ -49,40 +45,4 @@ export class WasmUtil {
   private constructor() {
     // This class is a singleton
   }
-}
-
-/**
- * Provided as a failback in case the wasm for the method is unable to be loaded
- * @param coord Coord to calculate new offset from
- * @param offset Old offset
- * @param oldZoom Old zoom of the canvas
- * @param newZoom New zoom of the canvas
- * @param size Size for the coord to range within
- */
-function calculateOffset(coord: number, offset: number, oldZoom: number, newZoom: number, size: number) {
-  const newValue = size / newZoom;
-
-  const gap = size - newValue;
-  let firstSide = offset;
-  if (firstSide < 0) {
-    firstSide = 0;
-  } else if (firstSide > gap) {
-    firstSide = gap;
-  }
-
-  let secondSide = offset + size / oldZoom - newValue;
-  if (secondSide > gap) {
-    secondSide = gap;
-  } else if (secondSide < 0) {
-    secondSide = 0;
-  }
-
-  const boundary = [firstSide, secondSide];
-  let newOffset = coord - newValue / 2;
-  if (newOffset < boundary[0]) {
-    newOffset = boundary[0];
-  } else if (newOffset > boundary[1]) {
-    newOffset = boundary[1];
-  }
-  return newOffset;
 }
