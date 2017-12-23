@@ -43,7 +43,10 @@ export class ImageDisplayComponent implements AfterViewInit {
       this.context = context;
     }
 
-    this.canvasSubscription = this.canvasData.subscribe(this.drawCanvas.bind(this));
+    this.canvasSubscription = this.canvasData.subscribe((canvas: IPixelCanvas) => {
+      this.drawCanvas(canvas);
+      this.drawCurrentOutline(canvas);
+    });
     this.appSubscription = this.appData.subscribe(() => {
       const linkElement = this.downloadLink.nativeElement as HTMLLinkElement;
       linkElement.href = (this.canvas.nativeElement as HTMLCanvasElement).toDataURL();
@@ -77,6 +80,21 @@ export class ImageDisplayComponent implements AfterViewInit {
           this.amplification, this.amplification);
       });
     });
+  }
+
+  /**
+   * Draws the outline of the current zoom context.
+   * TODO: Connect the magic 400 in here to the other canvas
+   * @param canvas Canvas data to use
+   */
+  private drawCurrentOutline(canvas: IPixelCanvas) {
+    this.context.strokeStyle = "red";
+
+    const amplification = this.amplification * 10 / canvas.zoom;
+    const dimensionOffset = this.amplification / 400;
+    this.context.strokeRect(canvas.xOffset * canvas.width * dimensionOffset,
+      canvas.yOffset * canvas.height * dimensionOffset, amplification * canvas.width,
+      amplification * canvas.height);
   }
 
 }
