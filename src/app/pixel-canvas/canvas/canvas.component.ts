@@ -29,6 +29,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private pixelHeight: number;
   private zoom: number = 10;
   private canvas: CanvasUtility;
+  private mouseMove: boolean = false;
 
   constructor(private readonly ngRedux: NgRedux<IAppState>, private actions: CanvasActions) { }
 
@@ -72,12 +73,22 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
    * @param event Mouse event from the HTML
    */
   public canvasClick(event: MouseEvent) {
-    const coordinate = this.canvas.getEventPosition(event);
+    if (!this.mouseMove) {
+      const coordinate = this.canvas.getEventPosition(event);
 
-    const xValue = Math.floor(coordinate[0] * this.canvasData.width / this.canvasWidth);
-    const yValue = Math.floor(coordinate[1] * this.canvasData.height / this.canvasHeight);
+      const xValue = Math.floor(coordinate[0] * this.canvasData.width / this.canvasWidth);
+      const yValue = Math.floor(coordinate[1] * this.canvasData.height / this.canvasHeight);
 
-    this.ngRedux.dispatch(this.actions.canvasClick(xValue, yValue));
+      this.ngRedux.dispatch(this.actions.canvasClick(xValue, yValue));
+    }
+  }
+
+  public canvasMouseDown(event: MouseEvent) {
+    this.mouseMove = false;
+  }
+
+  public canvasMouseMove(event: MouseEvent) {
+    this.mouseMove = true;
   }
 
   /**

@@ -8,6 +8,7 @@ export class CanvasActions {
   public static readonly CHANGE_HEIGHT = "pixelChange.changeHeight";
   public static readonly CHANGE_WIDTH = "pixelChange.changeWidth";
   public static readonly CLEAR_CANVAS = "pixelChange.clearCanvas";
+  public static readonly PAN_CANVAS = "pixelChange.panCanvas";
   public static readonly ZOOM_CANVAS = "pixelChange.zoomCanvas";
 
   public canvasClick(xCoord: number, yCoord: number) {
@@ -41,6 +42,13 @@ export class CanvasActions {
   public clearCanvas(): Action {
     return {
       type: CanvasActions.CLEAR_CANVAS,
+    };
+  }
+
+  public panCanvas(xCoord: number, yCoord: number): AnyAction {
+    return {
+      type: CanvasActions.PAN_CANVAS,
+      value: [xCoord, yCoord],
     };
   }
 

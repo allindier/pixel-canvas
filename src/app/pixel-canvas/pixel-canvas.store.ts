@@ -17,6 +17,9 @@ const MAX_ZOOM = 40;
 const CANVAS_HEIGHT = 400;
 const CANVAS_WIDTH = 400;
 
+/**
+ * Builds the initial state object.
+ */
 export function getInitialState(): IPixelCanvas {
   const pixelArray: string[][] = [];
   pixelArray.length = 6;
