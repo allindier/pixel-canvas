@@ -1,12 +1,14 @@
 import { NgRedux } from "@angular-redux/store";
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ChangeDetectionStrategy } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import "rxjs/add/observable/combineLatest";
 import "rxjs/add/operator/skip";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
-import { IAppState } from "../../store";
+import { IAppState, ICanvas } from "../../store";
+import { IPixelCanvasData } from "../pixel-canvas-data.store";
+import { IPixelCanvasView } from "../pixel-canvas-view.store";
 import { CanvasActions } from "../pixel-canvas.actions";
-import { IPixelCanvas } from "../pixel-canvas.store";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,7 +21,7 @@ export class ImageDisplayComponent implements AfterViewInit {
   @ViewChild("downloadLink") public downloadLink: ElementRef;
 
   public appData: Observable<symbol>;
-  public canvasData: Observable<IPixelCanvas>;
+  public canvasData: Observable<ICanvas>;
 
   private appSubscription: Subscription;
   private canvasSubscription: Subscription;
@@ -28,7 +30,14 @@ export class ImageDisplayComponent implements AfterViewInit {
   private readonly amplification = 5;
 
   constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions) {
-    this.canvasData = ngRedux.select<IPixelCanvas>(["canvas", "present"]);
+    this.canvasData = Observable.combineLatest(ngRedux.select<IPixelCanvasData>(["canvasData", "present"]),
+      ngRedux.select<IPixelCanvasView>(["canvasView"]),
+      (canvasData: IPixelCanvasData, canvasView: IPixelCanvasView): ICanvas => {
+        return {
+          canvasData,
+          canvasView,
+        };
+    });
 
     // Need to skip the first call to avoid the save dialog on initialization
     this.appData = ngRedux.select<symbol>("app").skip(1);
@@ -43,10 +52,11 @@ export class ImageDisplayComponent implements AfterViewInit {
       this.context = context;
     }
 
-    this.canvasSubscription = this.canvasData.subscribe((canvas: IPixelCanvas) => {
+    this.canvasSubscription = this.canvasData.subscribe((canvas: ICanvas) => {
       this.drawCanvas(canvas);
       this.drawCurrentOutline(canvas);
     });
+
     this.appSubscription = this.appData.subscribe(() => {
       const linkElement = this.downloadLink.nativeElement as HTMLLinkElement;
       linkElement.href = (this.canvas.nativeElement as HTMLCanvasElement).toDataURL();
@@ -67,13 +77,14 @@ export class ImageDisplayComponent implements AfterViewInit {
    *
    * @param canvas Canvas data to use when drawing on the canvas
    */
-  private drawCanvas(canvas: IPixelCanvas) {
+  private drawCanvas(canvas: ICanvas) {
+    const data = canvas.canvasData;
     // Directly modify the canvas like this so we retain a reference to the object on the page
     const element: HTMLCanvasElement = this.canvas.nativeElement;
-    element.width = canvas.width * this.amplification;
-    element.height = canvas.height * this.amplification;
+    element.width = data.width * this.amplification;
+    element.height = data.height * this.amplification;
 
-    canvas.pixels.forEach((column: string[], xIndex: number) => {
+    data.pixels.forEach((column: string[], xIndex: number) => {
       column.forEach((pixel: string, yIndex: number) => {
         this.context.fillStyle = pixel;
         this.context.fillRect(xIndex * this.amplification, yIndex * this.amplification,
@@ -87,14 +98,16 @@ export class ImageDisplayComponent implements AfterViewInit {
    * TODO: Connect the magic 400 in here to the other canvas
    * @param canvas Canvas data to use
    */
-  private drawCurrentOutline(canvas: IPixelCanvas) {
+  private drawCurrentOutline(canvas: ICanvas) {
+    const data = canvas.canvasData;
+    const view = canvas.canvasView;
     this.context.strokeStyle = "red";
 
-    const amplification = this.amplification * 10 / canvas.zoom;
+    const amplification = this.amplification * 10 / view.zoom;
     const dimensionOffset = this.amplification / 400;
-    this.context.strokeRect(canvas.xOffset * canvas.width * dimensionOffset,
-      canvas.yOffset * canvas.height * dimensionOffset, amplification * canvas.width,
-      amplification * canvas.height);
+    this.context.strokeRect(view.xOffset * data.width * dimensionOffset,
+      view.yOffset * data.height * dimensionOffset, amplification * data.width,
+      amplification * data.height);
   }
 
 }

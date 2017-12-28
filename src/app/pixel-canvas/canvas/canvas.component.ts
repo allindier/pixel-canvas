@@ -1,10 +1,13 @@
 import { NgRedux } from "@angular-redux/store/lib/src/components/ng-redux";
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { OnDestroy } from "@angular/core/src/metadata/lifecycle_hooks";
+import "rxjs/add/observable/combineLatest";
+import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
-import { IAppState } from "../../store";
+import { IAppState, ICanvas } from "../../store";
+import { IPixelCanvasData } from "../pixel-canvas-data.store";
+import { IPixelCanvasView } from "../pixel-canvas-view.store";
 import { CanvasActions } from "../pixel-canvas.actions";
-import { IPixelCanvas } from "../pixel-canvas.store";
 import { CanvasUtility } from "../utility/canvas-utility";
 
 type Coordinate = [number, number];
@@ -23,7 +26,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   public readonly canvasWidth = 400;
   public readonly canvasHeight = 400;
 
-  private canvasData: IPixelCanvas;
+  private canvasData: IPixelCanvasData;
+  private canvasView: IPixelCanvasView;
   private subscription: Subscription;
   private pixelWidth: number;
   private pixelHeight: number;
@@ -40,10 +44,18 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   public ngAfterViewInit() {
     this.canvas = new CanvasUtility(this.canvasElem.nativeElement, this.canvasWidth, this.canvasHeight);
 
-    this.subscription = this.ngRedux.select<IPixelCanvas>(["canvas", "present"]).subscribe((canvas: IPixelCanvas) => {
-      this.canvasData = canvas;
-      this.pixelHeight = this.canvasHeight / canvas.height;
-      this.pixelWidth = this.canvasWidth / canvas.width;
+    this.subscription = Observable.combineLatest(this.ngRedux.select<IPixelCanvasData>(["canvasData", "present"]),
+      this.ngRedux.select<IPixelCanvasView>(["canvasView"]),
+      (canvasData: IPixelCanvasData, canvasView: IPixelCanvasView): ICanvas => {
+        return {
+          canvasData,
+          canvasView,
+        };
+    }).subscribe((canvas: ICanvas) => {
+      this.canvasView = canvas.canvasView;
+      this.canvasData = canvas.canvasData;
+      this.pixelHeight = this.canvasHeight / canvas.canvasData.height;
+      this.pixelWidth = this.canvasWidth / canvas.canvasData.width;
 
       this.redrawCanvas();
     });
@@ -95,9 +107,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
    * Sets the zoom for the canvas and then redraws the whole thing using the utility.
    */
   private redrawCanvas() {
-    this.canvas.zoom = this.canvasData.zoom;
-    this.canvas.xOffset = this.canvasData.xOffset;
-    this.canvas.yOffset = this.canvasData.yOffset;
+    this.canvas.zoom = this.canvasView.zoom;
+    this.canvas.xOffset = this.canvasView.xOffset;
+    this.canvas.yOffset = this.canvasView.yOffset;
 
     this.canvas.clearCanvas();
     this.canvas.drawPixels(this.canvasData.pixels, this.canvasData.width, this.canvasData.height);
