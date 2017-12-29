@@ -1,0 +1,10 @@
+[package]
+name = "utils"
+version = "0.1.0"
+authors = ["Allin <allindier@gmail.com>"]
+
+[dependencies]
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["cdylib"]

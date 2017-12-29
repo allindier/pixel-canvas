@@ -1,4 +1,5 @@
 import { AnyAction } from "redux";
+import { WasmUtil } from "../../utils.wasm";
 import { CanvasActions } from "./pixel-canvas.actions";
 
 export interface IPixelCanvasView {
@@ -64,8 +65,8 @@ function changeZoom(state: IPixelCanvasView, zoomIn: boolean, xCoord: number, yC
     const newState = Object.assign({}, state);
     newState.zoom = zoom;
     const newZoom = newState.zoom / 10;
-    newState.xOffset = calculateOffset(xCoord, newState.xOffset, oldZoom, newZoom, CANVAS_WIDTH);
-    newState.yOffset = calculateOffset(yCoord, newState.yOffset, oldZoom, newZoom, CANVAS_HEIGHT);
+    newState.xOffset = WasmUtil.calculateZoomOffset(xCoord, newState.xOffset, oldZoom, newZoom, CANVAS_WIDTH);
+    newState.yOffset = WasmUtil.calculateZoomOffset(yCoord, newState.yOffset, oldZoom, newZoom, CANVAS_HEIGHT);
     return newState;
   }
 }
@@ -80,50 +81,8 @@ function panCanvas(state: IPixelCanvasView, xCoord: number, yCoord: number) {
   const newState = Object.assign({}, state);
   const zoom = newState.zoom / 10;
 
-  newState.xOffset = calculatePanOffset(xCoord, newState.xOffset, zoom, CANVAS_WIDTH);
-  newState.yOffset = calculatePanOffset(yCoord, newState.yOffset, zoom, CANVAS_HEIGHT);
+  newState.xOffset = WasmUtil.calculatePanOffset(xCoord, newState.xOffset, zoom, CANVAS_WIDTH);
+  newState.yOffset = WasmUtil.calculatePanOffset(yCoord, newState.yOffset, zoom, CANVAS_HEIGHT);
 
   return newState;
-}
-
-function calculatePanOffset(coord: number, offset: number, zoom: number, size: number): number {
-  const value = size / zoom;
-  const max = size - value;
-  let position = offset - coord / zoom;
-
-  if (position < 0) {
-    position = 0;
-  } else if (position > max) {
-    position = max;
-  }
-
-  return position;
-}
-
-function calculateOffset(coord: number, offset: number, oldZoom: number, newZoom: number, size: number): number {
-  const newValue = size / newZoom;
-
-  const gap = size - newValue;
-  let firstSide = offset;
-  if (firstSide < 0) {
-    firstSide = 0;
-  } else if (firstSide > gap) {
-    firstSide = gap;
-  }
-
-  let secondSide = offset + size / oldZoom - newValue;
-  if (secondSide > gap) {
-    secondSide = gap;
-  } else if (secondSide < 0) {
-    secondSide = 0;
-  }
-
-  const boundary = [firstSide, secondSide];
-  let newOffset = coord - newValue / 2;
-  if (newOffset < boundary[0]) {
-    newOffset = boundary[0];
-  } else if (newOffset > boundary[1]) {
-    newOffset = boundary[1];
-  }
-  return newOffset;
 }
