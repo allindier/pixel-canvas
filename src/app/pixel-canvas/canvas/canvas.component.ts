@@ -33,7 +33,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private pixelHeight: number;
   private zoom: number = 10;
   private canvas: CanvasUtility;
+
+  // Used to track mouse properties for clicking/dragging
   private mouseMove: boolean = false;
+  private mousePosition: Coordinate | null;
 
   constructor(private readonly ngRedux: NgRedux<IAppState>, private actions: CanvasActions) { }
 
@@ -93,14 +96,31 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
       this.ngRedux.dispatch(this.actions.canvasClick(xValue, yValue));
     }
+
+    this.mousePosition = null;
   }
 
+  /**
+   * Called when a mousedown event occurs on the canvas.  Used to track dragging and provide a reference point.
+   * @param event Mouse position for the mouse down
+   */
   public canvasMouseDown(event: MouseEvent) {
     this.mouseMove = false;
+    this.mousePosition = this.canvas.getEventPosition(event);
   }
 
+  /**
+   * Called when a mousemove event occurs on the canvas.  Used to fire dragging event when the mouse is down.
+   * @param event Mouse position for the movement
+   */
   public canvasMouseMove(event: MouseEvent) {
     this.mouseMove = true;
+
+    if (this.mousePosition) {
+      const coordinate = this.canvas.getEventPosition(event);
+      this.ngRedux.dispatch(this.actions.panCanvas(coordinate[0] - this.mousePosition[0],
+        coordinate[1] - this.mousePosition[1]));
+    }
   }
 
   /**

@@ -48,7 +48,10 @@ export class CanvasActions {
   public panCanvas(xCoord: number, yCoord: number): AnyAction {
     return {
       type: CanvasActions.PAN_CANVAS,
-      value: [xCoord, yCoord],
+      value: {
+        xCoord,
+        yCoord,
+      },
     };
   }
 
