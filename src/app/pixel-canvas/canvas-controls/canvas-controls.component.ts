@@ -2,7 +2,7 @@ import { NgRedux } from "@angular-redux/store";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { IAppState } from "../../store";
-import { IPixelCanvas } from "../pixel-canvas.store";
+import { IPixelCanvasData } from "../pixel-canvas-data.store";
 
 import { ActionCreators } from "redux-undo";
 import { AppActions } from "../../app.actions";
@@ -16,11 +16,11 @@ import { CanvasActions } from "../pixel-canvas.actions";
 })
 export class CanvasControlsComponent {
 
-  public canvas: Observable<IPixelCanvas>;
+  public canvas: Observable<IPixelCanvasData>;
 
   constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions, private appActions: AppActions) {
     // Empty for now, probably going to use later
-    this.canvas = ngRedux.select<IPixelCanvas>(["canvas", "present"]);
+    this.canvas = ngRedux.select<IPixelCanvasData>(["canvasData", "present"]);
   }
 
   /**

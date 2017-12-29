@@ -2,23 +2,16 @@ import { AnyAction } from "redux";
 import { CalculateOffset, WasmUtil } from "../../utils.wasm";
 import { CanvasActions } from "./pixel-canvas.actions";
 
-export interface IPixelCanvas {
+export interface IPixelCanvasData {
   color: string;
   height: number;
   pixels: string[][];
   width: number;
-  xOffset: number;
-  yOffset: number;
-  zoom: number;
 }
 
 const SOLID_WHITE = "#FFFFFF";
-const MIN_ZOOM = 10;
-const MAX_ZOOM = 40;
-const CANVAS_HEIGHT = 400;
-const CANVAS_WIDTH = 400;
 
-export function getInitialState(): IPixelCanvas {
+export function getInitialState(): IPixelCanvasData {
   const pixelArray: string[][] = [];
   pixelArray.length = 6;
   for (let i = 0; i < 6; i++) {
@@ -30,14 +23,11 @@ export function getInitialState(): IPixelCanvas {
     height: 4,
     pixels: pixelArray,
     width: 6,
-    xOffset: 0,
-    yOffset: 0,
-    zoom: MIN_ZOOM,
   };
 }
 
-export function reducer(lastState: IPixelCanvas = getInitialState(), action: AnyAction): IPixelCanvas {
-  let newState: IPixelCanvas;
+export function dataReducer(lastState: IPixelCanvasData = getInitialState(), action: AnyAction) {
+  let newState: IPixelCanvasData;
 
   switch (action.type) {
     case CanvasActions.CANVAS_CLICK:
@@ -70,8 +60,6 @@ export function reducer(lastState: IPixelCanvas = getInitialState(), action: Any
       return changeWidth(lastState, action.value);
     case CanvasActions.CLEAR_CANVAS:
       return getInitialState();
-    case CanvasActions.ZOOM_CANVAS:
-      return changeZoom(lastState, action.value.zoomIn, action.value.xCoord, action.value.yCoord);
     default:
       return lastState;
   }
@@ -83,7 +71,7 @@ export function reducer(lastState: IPixelCanvas = getInitialState(), action: Any
  * @param state Current state object
  * @param newHeight New height to use for the canvas
  */
-function changeHeight(state: IPixelCanvas, newHeight: number): IPixelCanvas {
+function changeHeight(state: IPixelCanvasData, newHeight: number): IPixelCanvasData {
   const newState = Object.assign({}, state);
   const lastHeight = state.height;
 
@@ -106,7 +94,7 @@ function changeHeight(state: IPixelCanvas, newHeight: number): IPixelCanvas {
  * @param state Current state object
  * @param newWidth New width to use for the canvas
  */
-function changeWidth(state: IPixelCanvas, newWidth: number): IPixelCanvas {
+function changeWidth(state: IPixelCanvasData, newWidth: number): IPixelCanvasData {
   const newState = Object.assign({}, state);
   const lastWidth = state.width;
 
@@ -123,27 +111,4 @@ function changeWidth(state: IPixelCanvas, newWidth: number): IPixelCanvas {
 
   newState.width = newWidth;
   return newState;
-}
-
-function changeZoom(state: IPixelCanvas, zoomIn: boolean, xCoord: number, yCoord: number): IPixelCanvas {
-  let zoom = state.zoom;
-  if (zoomIn) {
-    zoom++;
-  } else {
-    zoom--;
-  }
-
-  if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) {
-    return state;
-  } else {
-    const oldZoom = state.zoom / 10;
-    const newState = Object.assign({}, state);
-    newState.zoom = zoom;
-    const newZoom = newState.zoom / 10;
-
-    newState.xOffset = WasmUtil.calculateOffset(xCoord, newState.xOffset, oldZoom, newZoom, CANVAS_WIDTH);
-    newState.yOffset = WasmUtil.calculateOffset(yCoord, newState.yOffset, oldZoom, newZoom, CANVAS_HEIGHT);
-
-    return newState;
-  }
 }
