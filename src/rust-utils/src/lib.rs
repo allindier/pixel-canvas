@@ -1,5 +1,23 @@
+/// Calculates the new offset when panning.  Will attempt to keep the field of view within the canvas.
 #[no_mangle]
-pub extern fn calculateOffset(coord: f32, offset: f32, old_zoom: f32, new_zoom: f32, size: f32) -> f32 {
+pub extern fn calculatePanOffset(coord: f32, offset: f32, zoom: f32, size: f32) -> f32 {
+  let value = size / zoom;
+  let max = size - value;
+  let mut position = offset - coord / zoom;
+
+  if position < 0_f32 {
+    position = 0_f32;
+  } else if position > max {
+    position = max;
+  }
+
+  position
+}
+
+/// Calculates the new offset when zooming on the canvas.  Will attempt to prevent the field of view from
+/// leaving the previous zoombox if zooming in.
+#[no_mangle]
+pub extern fn calculateZoomOffset(coord: f32, offset: f32, old_zoom: f32, new_zoom: f32, size: f32) -> f32 {
     let new_value = size / new_zoom;
 
     let gap = size - new_value;

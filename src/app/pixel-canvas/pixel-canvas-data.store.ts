@@ -1,5 +1,4 @@
 import { AnyAction } from "redux";
-import { CalculateOffset, WasmUtil } from "../../utils.wasm";
 import { CanvasActions } from "./pixel-canvas.actions";
 
 export interface IPixelCanvasData {

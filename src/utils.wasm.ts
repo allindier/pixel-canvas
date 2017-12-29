@@ -1,4 +1,6 @@
-export type CalculateOffset = (coord: number, offset: number, oldZoom: number, newZoom: number, size: number) => number;
+export type CalculatePanOffset = (coord: number, offset: number, zoom: number, size: number) => number;
+export type CalculateZoomOffset =
+  (coord: number, offset: number, oldZoom: number, newZoom: number, size: number) => number;
 
 // Shim type
 interface IWebAssemblyModule {
@@ -8,7 +10,8 @@ interface IWebAssemblyModule {
 }
 
 interface IExports {
-  calculateOffset: CalculateOffset;
+  calculatePanOffset: CalculatePanOffset;
+  calculateZoomOffset: CalculateZoomOffset;
 }
 
 // Shim Type
@@ -16,8 +19,12 @@ declare var WebAssembly: any;
 
 export class WasmUtil {
 
-  public static get calculateOffset(): CalculateOffset {
-    return WasmUtil.importObject.calculateOffset;
+  public static get calculatePanOffset(): CalculatePanOffset {
+    return WasmUtil.importObject.calculatePanOffset;
+  }
+
+  public static get calculateZoomOffset(): CalculateZoomOffset {
+    return WasmUtil.importObject.calculateZoomOffset;
   }
 
   /**
@@ -43,6 +50,6 @@ export class WasmUtil {
   private static isInit = false;
 
   private constructor() {
-    // This class is a singleton
+    // This class is a singleton.  Or really just a static container.
   }
 }
