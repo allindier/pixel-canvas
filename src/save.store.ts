@@ -1,9 +1,9 @@
 import { Action } from "redux";
-import { AppActions } from "./app.actions";
+import { SaveActions } from "./save.actions";
 
 export function reducer(lastState: symbol = Symbol(), action: Action) {
   switch (action.type) {
-    case AppActions.SAVE_CANVAS:
+    case SaveActions.SAVE_CANVAS:
       return Symbol();
     default:
       return lastState;

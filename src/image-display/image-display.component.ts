@@ -1,14 +1,14 @@
 import { NgRedux } from "@angular-redux/store";
-import { ChangeDetectionStrategy } from "@angular/core";
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy } from "@angular/core";
 import "rxjs/add/observable/combineLatest";
 import "rxjs/add/operator/skip";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
-import { IAppState, ICanvas } from "../../store";
 import { IPixelCanvasData } from "../pixel-canvas-data.store";
 import { IPixelCanvasView } from "../pixel-canvas-view.store";
 import { CanvasActions } from "../pixel-canvas.actions";
+import { IAppState, ICanvas } from "../store";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,8 +17,11 @@ import { CanvasActions } from "../pixel-canvas.actions";
 })
 export class ImageDisplayComponent implements AfterViewInit {
 
-  @ViewChild("displayCanvas") public canvas: ElementRef;
-  @ViewChild("downloadLink") public downloadLink: ElementRef;
+  @ViewChild("displayCanvas")
+  public canvas: ElementRef;
+
+  @ViewChild("downloadLink")
+  public downloadLink: ElementRef;
 
   public appData: Observable<symbol>;
   public canvasData: Observable<ICanvas>;

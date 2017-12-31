@@ -1,16 +1,16 @@
 import { combineReducers } from "redux";
 import undoable from "redux-undo";
-import { reducer as app } from "./app.store";
 import {
   dataReducer,
   getInitialState as getInitialDataState,
   IPixelCanvasData,
-} from "./pixel-canvas/pixel-canvas-data.store";
+} from "./pixel-canvas-data.store";
 import {
   getInitialState as getInitialViewState,
   IPixelCanvasView,
   viewReducer,
-} from "./pixel-canvas/pixel-canvas-view.store";
+} from "./pixel-canvas-view.store";
+import { reducer as app } from "./save.store";
 
 export interface ICanvas {
   canvasData: IPixelCanvasData;

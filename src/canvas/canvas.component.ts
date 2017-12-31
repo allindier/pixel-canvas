@@ -4,10 +4,10 @@ import { OnDestroy } from "@angular/core/src/metadata/lifecycle_hooks";
 import "rxjs/add/observable/combineLatest";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
-import { IAppState, ICanvas } from "../../store";
 import { IPixelCanvasData } from "../pixel-canvas-data.store";
 import { IPixelCanvasView } from "../pixel-canvas-view.store";
 import { CanvasActions } from "../pixel-canvas.actions";
+import { IAppState, ICanvas } from "../store";
 import { CanvasUtility } from "../utility/canvas-utility";
 
 type Coordinate = [number, number];

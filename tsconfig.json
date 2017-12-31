@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./lib",
+    "outDir": "./target",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -13,10 +13,7 @@
     "alwaysStrict": true,
     "strictNullChecks": true,
     "target": "es5",
-    "typeRoots": [
-      "node_modules/@types",
-      "node_modules/redux-undo/typings.d.ts"
-    ],
+    "typeRoots": [],
     "lib": [
       "es2017",
       "dom"
