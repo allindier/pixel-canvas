@@ -43,3 +43,5 @@ export class PixelCanvasModule {
     ngRedux.configureStore(rootReducer, INITIAL_STATE);
   }
 }
+
+export { PixelCanvasComponent };

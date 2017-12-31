@@ -1,5 +1,5 @@
 
-type Coordinate = [number, number];
+export type Coordinate = [number, number];
 
 export class CanvasUtility {
 
