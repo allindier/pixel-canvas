@@ -1,13 +1,14 @@
 {
   "name": "pixel-canvas",
-  "version": "0.4.0",
+  "version": "0.4.14",
   "license": "MIT",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
   "scripts": {
-    "build": "tsc --project .",
-    "lint": "tslint --project .",
-    "fixlint": "tslint --project . --fix true"
+    "build": "rm -rf lib && mkdir -p lib && cp -r src lib && find lib -name \\*.ts -delete && npm run build:js",
+    "build:js": "tsc --project . && ngi --compress lib",
+    "fixlint": "tslint --project . --fix true",
+    "lint": "tslint --project ."
   },
   "dependencies": {
     "@angular-redux/store": "^7.0.1",
@@ -24,6 +25,7 @@
     "rxjs": "^5.5.2"
   },
   "devDependencies": {
+    "angular-inliner-cli": "^1.2.1",
     "tslint": "^5.8.0",
     "typescript": "~2.4.2"
   }

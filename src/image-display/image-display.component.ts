@@ -13,7 +13,7 @@ import { IAppState, ICanvas } from "../store";
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-image-display",
-  templateUrl: "./image-display.html",
+  templateUrl: "./src/image-display/image-display.html",
 })
 export class ImageDisplayComponent implements AfterViewInit {
 

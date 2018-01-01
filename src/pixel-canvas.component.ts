@@ -6,8 +6,8 @@ import { IAppState } from "./store";
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "pixel-canvas",
-  styleUrls: ["./pixel-canvas.css"],
-  templateUrl: "./pixel-canvas.html",
+  styleUrls: ["./src/pixel-canvas.css"],
+  templateUrl: "./src/pixel-canvas.html",
 })
 export class PixelCanvasComponent {
 

@@ -1,5 +1,5 @@
 import { NgRedux } from "@angular-redux/store/lib/src/components/ng-redux";
-import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild } from "@angular/core";
 import { OnDestroy } from "@angular/core/src/metadata/lifecycle_hooks";
 import "rxjs/add/observable/combineLatest";
 import { Observable } from "rxjs/Observable";
@@ -13,9 +13,10 @@ import { CanvasUtility } from "../utility/canvas-utility";
 type Coordinate = [number, number];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-canvas",
-  styleUrls: ["./canvas.css"],
-  templateUrl: "./canvas.html",
+  styleUrls: ["./src/canvas/canvas.css"],
+  templateUrl: "./src/canvas/canvas.html",
 })
 export class CanvasComponent implements AfterViewInit, OnDestroy {
 

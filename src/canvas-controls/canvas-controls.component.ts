@@ -10,8 +10,8 @@ import { IAppState } from "../store";
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-canvas-controls",
-  styleUrls: ["./canvas-controls.css"],
-  templateUrl: "./canvas-controls.html",
+  styleUrls: ["./src/canvas-controls/canvas-controls.css"],
+  templateUrl: "./src/canvas-controls/canvas-controls.html",
 })
 export class CanvasControlsComponent {
 

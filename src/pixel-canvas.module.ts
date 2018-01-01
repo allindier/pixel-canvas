@@ -12,6 +12,7 @@ import { CanvasComponent } from "./canvas/canvas.component";
 import { ImageDisplayComponent } from "./image-display/image-display.component";
 import { CanvasActions } from "./pixel-canvas.actions";
 import { PixelCanvasComponent } from "./pixel-canvas.component";
+import { SaveActions } from "./save.actions";
 import { IAppState, INITIAL_STATE, rootReducer } from "./store";
 
 @NgModule({
@@ -36,6 +37,7 @@ import { IAppState, INITIAL_STATE, rootReducer } from "./store";
   ],
   providers: [
     CanvasActions,
+    SaveActions,
   ],
 })
 export class PixelCanvasModule {
@@ -43,5 +45,3 @@ export class PixelCanvasModule {
     ngRedux.configureStore(rootReducer, INITIAL_STATE);
   }
 }
-
-export { PixelCanvasComponent };

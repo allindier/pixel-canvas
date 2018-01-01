@@ -1,23 +1,24 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./lib",
-    "sourceMap": true,
+    "alwaysStrict": true,
+    "baseUrl": ".",
     "declaration": true,
-    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "strict": true,
-    "noImplicitAny": true,
-    "noImplicitThis" : true,
-    "alwaysStrict": true,
-    "strictNullChecks": true,
-    "target": "es5",
-    "typeRoots": [],
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noImplicitThis" : true,
+    "outDir": "./lib",
+    "rootDir": ".",
+    "sourceMap": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "target": "es5"
   }
 }
 
