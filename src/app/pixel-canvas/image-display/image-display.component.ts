@@ -5,10 +5,11 @@ import "rxjs/add/observable/combineLatest";
 import "rxjs/add/operator/skip";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
-import { IAppState, ICanvas } from "../../store";
+import { IAppState } from "../../store";
 import { IPixelCanvasData } from "../pixel-canvas-data.store";
 import { IPixelCanvasView } from "../pixel-canvas-view.store";
 import { CanvasActions } from "../pixel-canvas.actions";
+import { SaveCanvasService } from "../save-canvas.service";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,8 +21,7 @@ export class ImageDisplayComponent implements AfterViewInit {
   @ViewChild("displayCanvas") public canvas: ElementRef;
   @ViewChild("downloadLink") public downloadLink: ElementRef;
 
-  public appData: Observable<symbol>;
-  public canvasData: Observable<ICanvas>;
+  public canvasData: Observable<IAppState>;
 
   private appSubscription: Subscription;
   private canvasSubscription: Subscription;
@@ -29,18 +29,15 @@ export class ImageDisplayComponent implements AfterViewInit {
   private context: CanvasRenderingContext2D;
   private readonly amplification = 5;
 
-  constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions) {
-    this.canvasData = Observable.combineLatest(ngRedux.select<IPixelCanvasData>(["canvasData", "present"]),
-      ngRedux.select<IPixelCanvasView>(["canvasView"]),
-      (canvasData: IPixelCanvasData, canvasView: IPixelCanvasView): ICanvas => {
-        return {
-          canvasData,
-          canvasView,
-        };
-    });
+  constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions,
+              private saveService: SaveCanvasService) {
+    this.canvasData = ngRedux.select<IAppState>();
 
-    // Need to skip the first call to avoid the save dialog on initialization
-    this.appData = ngRedux.select<symbol>("app").skip(1);
+    this.saveService.getSaveObservable().subscribe(() => {
+      const linkElement = this.downloadLink.nativeElement as HTMLLinkElement;
+      linkElement.href = (this.canvas.nativeElement as HTMLCanvasElement).toDataURL();
+      linkElement.click();
+    });
   }
 
   public ngAfterViewInit() {
@@ -52,15 +49,9 @@ export class ImageDisplayComponent implements AfterViewInit {
       this.context = context;
     }
 
-    this.canvasSubscription = this.canvasData.subscribe((canvas: ICanvas) => {
+    this.canvasSubscription = this.canvasData.subscribe((canvas: IAppState) => {
       this.drawCanvas(canvas);
       this.drawCurrentOutline(canvas);
-    });
-
-    this.appSubscription = this.appData.subscribe(() => {
-      const linkElement = this.downloadLink.nativeElement as HTMLLinkElement;
-      linkElement.href = (this.canvas.nativeElement as HTMLCanvasElement).toDataURL();
-      linkElement.click();
     });
   }
 
@@ -77,8 +68,8 @@ export class ImageDisplayComponent implements AfterViewInit {
    *
    * @param canvas Canvas data to use when drawing on the canvas
    */
-  private drawCanvas(canvas: ICanvas) {
-    const data = canvas.canvasData;
+  private drawCanvas(canvas: IAppState) {
+    const data = canvas.canvasData.present;
     // Directly modify the canvas like this so we retain a reference to the object on the page
     const element: HTMLCanvasElement = this.canvas.nativeElement;
     element.width = data.width * this.amplification;
@@ -98,8 +89,8 @@ export class ImageDisplayComponent implements AfterViewInit {
    * TODO: Connect the magic 400 in here to the other canvas
    * @param canvas Canvas data to use
    */
-  private drawCurrentOutline(canvas: ICanvas) {
-    const data = canvas.canvasData;
+  private drawCurrentOutline(canvas: IAppState) {
+    const data = canvas.canvasData.present;
     const view = canvas.canvasView;
     this.context.strokeStyle = "red";
 

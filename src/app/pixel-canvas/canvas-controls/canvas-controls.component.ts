@@ -5,8 +5,8 @@ import { IAppState } from "../../store";
 import { IPixelCanvasData } from "../pixel-canvas-data.store";
 
 import { ActionCreators } from "redux-undo";
-import { AppActions } from "../../app.actions";
 import { CanvasActions } from "../pixel-canvas.actions";
+import { SaveCanvasService } from "../save-canvas.service";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,7 +18,8 @@ export class CanvasControlsComponent {
 
   public canvas: Observable<IPixelCanvasData>;
 
-  constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions, private appActions: AppActions) {
+  constructor(private ngRedux: NgRedux<IAppState>, private actions: CanvasActions,
+              private saveService: SaveCanvasService) {
     // Empty for now, probably going to use later
     this.canvas = ngRedux.select<IPixelCanvasData>(["canvasData", "present"]);
   }
@@ -50,7 +51,7 @@ export class CanvasControlsComponent {
    * Save the current state of the canvas
    */
   public save() {
-    this.ngRedux.dispatch(this.appActions.saveCanvas());
+    this.saveService.next();
   }
 
   /**

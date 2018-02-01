@@ -4,7 +4,7 @@ import { OnDestroy } from "@angular/core/src/metadata/lifecycle_hooks";
 import "rxjs/add/observable/combineLatest";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
-import { IAppState, ICanvas } from "../../store";
+import { IAppState } from "../../store";
 import { IPixelCanvasData } from "../pixel-canvas-data.store";
 import { IPixelCanvasView } from "../pixel-canvas-view.store";
 import { CanvasActions } from "../pixel-canvas.actions";
@@ -47,18 +47,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   public ngAfterViewInit() {
     this.canvas = new CanvasUtility(this.canvasElem.nativeElement, this.canvasWidth, this.canvasHeight);
 
-    this.subscription = Observable.combineLatest(this.ngRedux.select<IPixelCanvasData>(["canvasData", "present"]),
-      this.ngRedux.select<IPixelCanvasView>(["canvasView"]),
-      (canvasData: IPixelCanvasData, canvasView: IPixelCanvasView): ICanvas => {
-        return {
-          canvasData,
-          canvasView,
-        };
-    }).subscribe((canvas: ICanvas) => {
+    this.subscription = this.ngRedux.select<IAppState>().subscribe((canvas: IAppState) => {
       this.canvasView = canvas.canvasView;
-      this.canvasData = canvas.canvasData;
-      this.pixelHeight = this.canvasHeight / canvas.canvasData.height;
-      this.pixelWidth = this.canvasWidth / canvas.canvasData.width;
+      this.canvasData = canvas.canvasData.present;
+      this.pixelHeight = this.canvasHeight / this.canvasData.height;
+      this.pixelWidth = this.canvasWidth / this.canvasData.width;
 
       this.redrawCanvas();
     });
@@ -77,6 +70,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
    * @param event Event from the mouse scrolling
    */
   public zoomCanvas(event: WheelEvent) {
+    event.preventDefault();
     const eventLocation = this.canvas.getEventPosition(event);
     this.ngRedux.dispatch(this.actions.zoomCanvas(event.detail < 0, eventLocation[0], eventLocation[1]));
   }

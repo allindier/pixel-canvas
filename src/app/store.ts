@@ -1,6 +1,5 @@
 import { combineReducers } from "redux";
 import undoable from "redux-undo";
-import { reducer as app } from "./app.store";
 import {
   dataReducer,
   getInitialState as getInitialDataState,
@@ -12,23 +11,24 @@ import {
   viewReducer,
 } from "./pixel-canvas/pixel-canvas-view.store";
 
-export interface ICanvas {
-  canvasData: IPixelCanvasData;
+export interface IAppState {
+  canvasData: {
+    // Technically there are also past and future fields.  I don't care about those.
+    present: IPixelCanvasData;
+  };
   canvasView: IPixelCanvasView;
 }
 
-export interface IAppState extends ICanvas {
-  app: symbol;
-}
-
-export const INITIAL_STATE: IAppState = {
-  app: Symbol(),
+/*
+  Sort of a workaround.  redux-undo messes with the state of the object, so while this is basically
+  the same type as IAppState, it must lack the present field
+*/
+export const INITIAL_STATE: any = {
   canvasData: getInitialDataState(),
   canvasView: getInitialViewState(),
 };
 
 export const rootReducer = combineReducers<IAppState>({
-  app,
   canvasData: undoable(dataReducer, {
     limit: 20,
   }),

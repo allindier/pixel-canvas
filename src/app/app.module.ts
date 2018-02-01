@@ -3,8 +3,8 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { PixelCanvasModule } from "./pixel-canvas/pixel-canvas.module";
 
-import { AppActions } from "./app.actions";
 import { AppComponent } from "./app.component";
+import { SaveCanvasService } from "./pixel-canvas/save-canvas.service";
 import { IAppState, INITIAL_STATE, rootReducer } from "./store";
 
 @NgModule({
@@ -18,7 +18,7 @@ import { IAppState, INITIAL_STATE, rootReducer } from "./store";
     PixelCanvasModule,
   ],
   providers: [
-    AppActions,
+    SaveCanvasService,
   ],
 })
 export class AppModule {
