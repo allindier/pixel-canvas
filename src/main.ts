@@ -1,7 +1,7 @@
 import { enableProdMode } from "@angular/core";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 
-import { AppModule } from "./app/app.module";
+import { PixelCanvasModule } from "./app/pixel-canvas.module";
 import { environment } from "./environments/environment";
 import { WasmUtil } from "./utils.wasm";
 
@@ -10,7 +10,7 @@ const initAngular = () => {
     enableProdMode();
   }
   // tslint:disable-next-line no-console
-  platformBrowserDynamic().bootstrapModule(AppModule).catch((err) => console.log(err));
+  platformBrowserDynamic().bootstrapModule(PixelCanvasModule).catch((err) => console.log(err));
 };
 
 WasmUtil.initialize().then(initAngular).catch(initAngular);

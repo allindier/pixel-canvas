@@ -1,12 +1,11 @@
 import { NgRedux } from "@angular-redux/store";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { IAppState } from "../../store";
-import { IPixelCanvasData } from "../pixel-canvas-data.store";
-
 import { ActionCreators } from "redux-undo";
+import { Observable } from "rxjs/Observable";
+import { IPixelCanvasData } from "../pixel-canvas-data.store";
 import { CanvasActions } from "../pixel-canvas.actions";
 import { SaveCanvasService } from "../save-canvas.service";
+import { IAppState } from "../store";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

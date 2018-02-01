@@ -1,7 +1,7 @@
 import { NgRedux } from "@angular-redux/store";
 import { ChangeDetectionStrategy, Component, HostListener } from "@angular/core";
 import { ActionCreators } from "redux-undo";
-import { IAppState } from "../store";
+import { IAppState } from "./store";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -4,12 +4,12 @@ import {
   dataReducer,
   getInitialState as getInitialDataState,
   IPixelCanvasData,
-} from "./pixel-canvas/pixel-canvas-data.store";
+} from "./pixel-canvas-data.store";
 import {
   getInitialState as getInitialViewState,
   IPixelCanvasView,
   viewReducer,
-} from "./pixel-canvas/pixel-canvas-view.store";
+} from "./pixel-canvas-view.store";
 
 export interface IAppState {
   canvasData: {

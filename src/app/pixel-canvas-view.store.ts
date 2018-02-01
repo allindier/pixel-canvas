@@ -1,5 +1,5 @@
 import { AnyAction } from "redux";
-import { WasmUtil } from "../../utils.wasm";
+import { WasmUtil } from "../utils.wasm";
 import { CanvasActions } from "./pixel-canvas.actions";
 
 export interface IPixelCanvasView {

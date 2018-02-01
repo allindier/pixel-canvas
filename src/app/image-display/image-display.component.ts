@@ -1,15 +1,15 @@
 import { NgRedux } from "@angular-redux/store";
-import { ChangeDetectionStrategy } from "@angular/core";
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy } from "@angular/core";
 import "rxjs/add/observable/combineLatest";
 import "rxjs/add/operator/skip";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
-import { IAppState } from "../../store";
 import { IPixelCanvasData } from "../pixel-canvas-data.store";
 import { IPixelCanvasView } from "../pixel-canvas-view.store";
 import { CanvasActions } from "../pixel-canvas.actions";
 import { SaveCanvasService } from "../save-canvas.service";
+import { IAppState } from "../store";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
