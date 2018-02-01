@@ -1,7 +1,7 @@
 # Pixel Canvas
 This is a simple test project to try creating an in browser pixel-by-pixel image editing/creating application.  This utilizes Angular as the primary tool to interact with the browser.
 
-The application can be run using the {code}npm run start{code} to run the application locally on port 4200.  Currently the application cannot be exported and integrated into other Angular applications because that effort seemed to mess some things in the code up and led to the removal of WebAssembly from the baseline.  Ideally, this will be resolved in the future so that the package is usable in other applications.
+The application can be run using `npm run start` to run the application locally on port 4200.  Currently the application cannot be exported and integrated into other Angular applications because that effort seemed to mess some things in the code up and led to the removal of WebAssembly from the baseline.  Ideally, this will be resolved in the future so that the package is usable in other applications.
 
 ## Features
 A quick list of features currently existing in the code
