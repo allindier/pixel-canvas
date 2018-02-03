@@ -1,23 +1,18 @@
 /* TODO: Figure out how to not be stupid with CSS */
 
 .canvas {
-    grid-row: span 2;
+    grid-column: 2;
 }
 
 .canvas-controls {
     grid-column: 1;
-    grid-row: 1;
+    padding: 6px;
 }
 
 .grid-arrangement {
-    display: grid;
+    display: inline-grid;
     grid-template-columns: auto auto;
-    grid-auto-rows: 1fr;
-}
-
-.image-display {
-    grid-column: 1;
-    grid-row: 2;
+    grid-template-rows: auto;
 }
 
 .card-margin {

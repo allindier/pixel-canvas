@@ -1,27 +1,53 @@
 <div>
+  <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Adjust Width/Height" matTooltipPosition="after">
+    <mat-icon aria-label="Adjust the height/width of the canvas">import_export</mat-icon>
+  </button>
+</div>
+
+<mat-menu #menu overlapTrigger="false">
+  <span mat-menu-item disableRipple="true" (click)="focusInput(width, $event)">
     <!-- ngModelChange would be preferable, but seems to get called twice -->
-    <mat-form-field style="width: 75px;">
-        <input matInput [ngModel]="(canvas | async).width" (change)="updateWidth($event.target.value)"
-            type="number" min="1" (keydown.enter)="blurInput($event)" placeholder="Width">
+    <mat-form-field style="width: 45px;">
+      <input #width matInput [ngModel]="(canvas | async).width" (change)="updateWidth($event.target.value)"
+        type="number" min="1" (keydown.enter)="blurInput($event)" placeholder="Width">
     </mat-form-field>
-    <mat-form-field style="width: 75px;">
-        <input matInput [ngModel]="(canvas | async).height" (change)="updateHeight($event.target.value)"
-            type="number" min="1" (keydown.enter)="blurInput($event)" placeholder="Height">
+  </span>
+  <span mat-menu-item disableRipple="true" (click)="focusInput(height, $event)">
+    <mat-form-field style="width: 45px;">
+      <input #height matInput [ngModel]="(canvas | async).height" (change)="updateHeight($event.target.value)"
+        type="number" min="1" (keydown.enter)="blurInput($event)" placeholder="Height">
     </mat-form-field>
+  </span>
+</mat-menu>
+
+<div>
+  <button mat-icon-button matTooltip="Select Color" matTooltipPosition="after" class="color-picker"
+    (keydown.enter)="blurInput($event)" [cpOKButton]="true" [cpCancelButton]="true"
+    [colorPicker]="(canvas | async).color" (colorPickerSelect)="updateColor($event)">
+    <mat-icon aria-label="Color picker button" [style.color]="(canvas | async).color">colorize</mat-icon>
+  </button>
 </div>
 
 <div>
-    <input id="canvas-color" class="color-picker" (keydown.enter)="blurInput($event)"
-        [style.background]="(canvas | async).color" [cpOKButton]="true" [cpCancelButton]="true"
-        [colorPicker]="(canvas | async).color" (colorPickerChange)="updateColor($event)">
+  <button (click)="undo()" mat-icon-button matTooltip="Undo" [matTooltipPosition]="'after'">
+    <mat-icon aria-label="Undo last action">undo</mat-icon>
+  </button>
 </div>
 
 <div>
-    <button (click)="undo()" mat-raised-button color="primary">Undo</button>
-    <button (click)="redo()" mat-raised-button color="primary">Redo</button>
+  <button (click)="redo()" mat-icon-button matTooltip="Redo" [matTooltipPosition]="'after'">
+    <mat-icon aria-label="Redo last undone action">redo</mat-icon>
+  </button>
 </div>
 
 <div>
-    <button (click)="save()" mat-raised-button color="primary">Save</button>
-    <button (click)="createNew()" mat-raised-button color="primary">Create New</button>
+  <button (click)="save()" mat-icon-button matTooltip="Save" [matTooltipPosition]="'after'">
+    <mat-icon aria-label="Save current state to image">save</mat-icon>
+  </button>
+</div>
+
+<div>
+  <button (click)="createNew()" mat-icon-button matTooltip="Create New" [matTooltipPosition]="'after'">
+    <mat-icon aria-label="Create new canvas">create</mat-icon>
+  </button>
 </div>

@@ -1,5 +1,5 @@
 import { NgRedux } from "@angular-redux/store";
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from "@angular/core";
 import { ActionCreators } from "redux-undo";
 import { Observable } from "rxjs/Observable";
 import { IPixelCanvasData } from "../pixel-canvas-data.store";
@@ -14,6 +14,9 @@ import { IAppState } from "../store";
   templateUrl: "./canvas-controls.html",
 })
 export class CanvasControlsComponent {
+
+  @ViewChild("colorPicker")
+  public colorPicker: ElementRef;
 
   public canvas: Observable<IPixelCanvasData>;
 
@@ -37,6 +40,15 @@ export class CanvasControlsComponent {
    */
   public createNew() {
     this.ngRedux.dispatch(this.actions.clearCanvas());
+  }
+
+  public focusInput(element: ElementRef, event: Event) {
+    event.stopPropagation();
+    element.focus();
+  }
+
+  public openColorPicker() {
+    this.colorPicker.nativeElement.click();
   }
 
   /**
